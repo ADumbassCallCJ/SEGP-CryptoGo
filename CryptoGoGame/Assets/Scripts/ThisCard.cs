@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ThisCard : MonoBehaviour
+public class ThisCard : MonoBehaviour, IPointerClickHandler
 {
     public List<Card> cards = new List<Card>();
 
@@ -47,7 +48,7 @@ public class ThisCard : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-                //assign data to cards
+        //assign data to cards
         if(this.tag == "Clone"){
             Debug.Log("triggered");
             cards[0] = PlayerDeck.StaticDeck[NumberOfCardsInDeck-1];
@@ -58,21 +59,24 @@ public class ThisCard : MonoBehaviour
 
         //open cards if it is the Hand Panel(Main playuer)
         Hand = GameObject.Find("Hand");
-        Debug.Log("this.transform.parent: " + this.transform.parent);
-        Debug.Log("Hand.transform: " + Hand.transform);
+ //       Debug.Log("this.transform.parent: " + this.transform.parent);
+ //       Debug.Log("Hand.transform: " + Hand.transform);
         if(this.transform.parent == Hand.transform){
-            Debug.Log("Hand Clone called");
+ //           Debug.Log("Hand Clone called");
             CardBack = false;
         }
         
 
-    //    cards[0] = CardDatabase.StaticCardList[thisId];
+        cards[0] = CardDatabase.StaticCardList[thisId];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
         CardName = cards[0].Name;
         CardDescription = cards[0].Description;
         CardToolName = cards[0].ToolName;
         CardCombinedKits = cards[0].CombinedKits;
+
+;
+
 
         staticCardBack = CardBack;
 
@@ -150,6 +154,10 @@ public class ThisCard : MonoBehaviour
             
      }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("You choose the card " + CardName);
+    }
 }
 
 
