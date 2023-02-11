@@ -380,6 +380,7 @@
 "Assets/Scripts/CardDatabase.cs"
 "Assets/Scripts/CardToHand.cs"
 "Assets/Scripts/PlayerDeck.cs"
+"Assets/Scripts/ShowHidePanel.cs"
 "Assets/Scripts/SwitchScene.cs"
 "Assets/Scripts/ThisCard.cs"
 -langversion:9.0
