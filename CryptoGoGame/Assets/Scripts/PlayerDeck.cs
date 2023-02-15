@@ -21,11 +21,20 @@ public class PlayerDeck : MonoBehaviour
 
     public GameObject CardBack;
     public GameObject Enemy;
+     private GameObject pickCard;
+     private GameObject playZone; 
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("PlayerDeck.Start() called");
+
+        pickCard = GameObject.Find("PickCard");
+        pickCard.SetActive(false);
+        playZone = GameObject.Find("PlayZone");
+        pickCard.SetActive(false);
+
+
         NumberOfPlayers = 4;
         DeckSize = CardDatabase.StaticCardList.Count*NumberOfPlayers;
         enemyPanelNameListSize = enemyPanelNameList.Count;

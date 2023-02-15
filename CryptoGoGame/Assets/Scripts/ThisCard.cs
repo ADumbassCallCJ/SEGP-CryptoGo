@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ThisCard : MonoBehaviour, IPointerClickHandler
+public class ThisCard : MonoBehaviour
 {
     public List<Card> cards = new List<Card>();
 
@@ -35,13 +35,18 @@ public class ThisCard : MonoBehaviour, IPointerClickHandler
     public GameObject Hand;
     public int NumberOfCardsInDeck;
 
+    private Transform thisTF;
+    private Vector3 cardInitialPosition;
+    private bool isClicked = false;
     // Start is called before the first frame update
     void Start()
     {
+        thisTF = GetComponent<Transform>();
         cards.Add(new Card());
  //       cards[0] = CardDatabase.StaticCardList[thisId];
         CardBack = true;
         NumberOfCardsInDeck = PlayerDeck.DeckSize;
+        cardInitialPosition = transform.position;
         Debug.Log(NumberOfCardsInDeck);
     }
 
@@ -154,10 +159,31 @@ public class ThisCard : MonoBehaviour, IPointerClickHandler
             
      }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Debug.Log("You choose the card " + CardName);
-    }
+    // public void OnPointerClick(PointerEventData eventData)
+    // {
+    //     Debug.Log("You choose the card " + CardName);
+    //     Debug.Log(transform.position);
+    //     if(!isClicked){
+    //         GameObject ClickedCard = GameObject.Find("ClickedCard");
+    //         // Debug.Log(transform.parent);
+    //         transform.SetParent(ClickedCard.transform,false);
+    //         transform.localScale = new Vector3(0.7f,0.7f,1);
+    //     //  //   transform.parent = ClickedCard.transform;
+    //         // Debug.Log(transform.parent);
+    //         transform.position = ClickedCard.transform.position;
+    //         // Debug.Log(transform.position);
+    //     }
+    //     else{
+    //         isClicked = false;
+    //         GameObject Hand = GameObject.Find("Hand");
+    //         transform.SetParent(Hand.transform, false);
+    //         transform.localScale = new Vector3(1f,1f,1);
+    //         transform.position = cardInitialPosition;
+    //         Debug.Log(transform.position);
+    //     }
+
+    
+    // }
 }
 
 
