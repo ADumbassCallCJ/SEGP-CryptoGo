@@ -72,7 +72,7 @@ public class ThisCard : MonoBehaviour
         }
         
 
-        cards[0] = CardDatabase.StaticCardList[thisId];
+        // cards[0] = CardDatabase.StaticCardList[thisId];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
         CardName = cards[0].Name;
