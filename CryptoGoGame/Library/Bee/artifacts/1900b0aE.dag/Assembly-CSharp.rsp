@@ -383,11 +383,8 @@
 "Assets/Scripts/DragDrop.cs"
 "Assets/Scripts/PickCard.cs"
 "Assets/Scripts/PlayerDeck.cs"
-<<<<<<< HEAD
-"Assets/Scripts/ShowHidePanel.cs"
-=======
 "Assets/Scripts/PlayUnplayCard.cs"
->>>>>>> Clickable-card
+"Assets/Scripts/ShowHidePanel.cs"
 "Assets/Scripts/SwitchScene.cs"
 "Assets/Scripts/ThisCard.cs"
 -langversion:9.0

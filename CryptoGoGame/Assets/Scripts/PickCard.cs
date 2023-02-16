@@ -28,7 +28,7 @@ public class PickCard : MonoBehaviour, IPointerClickHandler
         Debug.Log("U click the card");
         Debug.Log(transform.parent.gameObject);
         Debug.Log(PlayerDeck.pickCardZone);
-        if(transform.parent.gameObject == handZone){
+        if(transform.parent.gameObject == handZone && PlayerDeck.pickCard.active == false){
             PlayerDeck.pickCard.SetActive(true);
             transform.SetParent(PlayerDeck.pickCardZone.transform);
             transform.localScale = new Vector3(1.4f,1.4f,1);
