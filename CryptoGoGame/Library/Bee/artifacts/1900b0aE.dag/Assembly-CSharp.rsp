@@ -419,10 +419,12 @@
 "Assets/Scripts/PlayerDeck.cs"
 "Assets/Scripts/PlayUnplayCard.cs"
 "Assets/Scripts/ShowHidePanel.cs"
+"Assets/Scripts/SingletonReferences.cs"
 "Assets/Scripts/SwitchScene.cs"
 "Assets/Scripts/TestConnect.cs"
 "Assets/Scripts/ThisCard.cs"
-"Assets/Scripts/UI/Rooms/CreateRoom.cs"
+"Assets/Scripts/UI/Rooms/CreateRoomMenu.cs"
+"Assets/Scripts/UI/Rooms/RoomListing.cs"
 "Assets/Scripts/UI/Rooms/RoomListingsMenu.cs"
 -langversion:9.0
 
