@@ -414,6 +414,7 @@
 "Assets/Scripts/Managers/GameSettings.cs"
 "Assets/Scripts/Managers/MasterManager.cs"
 "Assets/Scripts/Managers/ScriptableObjectSingleton.cs"
+"Assets/Scripts/Match/GameManager.cs"
 "Assets/Scripts/Match/QuickMatch.cs"
 "Assets/Scripts/PickCard.cs"
 "Assets/Scripts/PlayerDeck.cs"
@@ -424,8 +425,12 @@
 "Assets/Scripts/TestConnect.cs"
 "Assets/Scripts/ThisCard.cs"
 "Assets/Scripts/UI/Rooms/CreateRoomMenu.cs"
+"Assets/Scripts/UI/Rooms/JoinRoom.cs"
+"Assets/Scripts/UI/Rooms/PlayerListing.cs"
+"Assets/Scripts/UI/Rooms/PlayerListingsMenu.cs"
 "Assets/Scripts/UI/Rooms/RoomListing.cs"
 "Assets/Scripts/UI/Rooms/RoomListingsMenu.cs"
+"Assets/Scripts/UI/Rooms/RoomLobby.cs"
 -langversion:9.0
 
 /deterministic

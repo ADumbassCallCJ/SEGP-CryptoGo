@@ -22,8 +22,10 @@ public class TestConnect : MonoBehaviourPunCallbacks
         Debug.Log("OnConnectedToMaster() was called by PUN ");
         Debug.Log(PhotonNetwork.LocalPlayer.NickName);
      //   PhotonNetwork.JoinRandomRoom();
+        if(!PhotonNetwork.InLobby){
+            PhotonNetwork.JoinLobby();
 
-        PhotonNetwork.JoinLobby();
+        }
     }
 
     public override void OnDisconnected(DisconnectCause cause)

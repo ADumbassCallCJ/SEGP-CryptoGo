@@ -25,13 +25,22 @@ public class RoomListingsMenu : MonoBehaviourPunCallbacks
                     _listings.RemoveAt(index);
                 }
             }
-            else{                
-                RoomListing listing = Instantiate(_roomListing, _content);
-                if(listing != null){
-                    listing.SetRoomInfo(info);
-                    _listings.Add(listing);
+            
+            else{         
+                int index = _listings.FindIndex(x => x.RoomInfo.Name == info.Name);
+                if(index == -1){
+                    RoomListing listing = Instantiate(_roomListing, _content);
+                    if(listing != null){
+                        listing.SetRoomInfo(info);
+                        _listings.Add(listing);
+                    }
                 }
+
             }
         }
+    }
+    public override void OnJoinedRoom()
+    {
+        PhotonNetwork.LoadLevel(1);
     }
 }

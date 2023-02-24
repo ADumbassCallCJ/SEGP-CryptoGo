@@ -10,7 +10,7 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private Text _roomName;
 
-
+    // Test  Player 
     public void OnClick_CreateRoom(){
 
         if(!PhotonNetwork.IsConnected){
@@ -21,8 +21,8 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
         // Join or create room
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = 4;
-        PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, null);
-        
+        PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+ //       PhotonNetwork.LoadLevel(1);
     }
     public override void OnCreatedRoom()
     {
