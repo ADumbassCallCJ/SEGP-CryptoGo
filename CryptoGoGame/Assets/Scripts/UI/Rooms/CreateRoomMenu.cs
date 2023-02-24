@@ -10,6 +10,8 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private Text _roomName;
 
+    private List<RoomInfo> _roomInfoLists = new List<RoomInfo>(); 
+
     // Test  Player 
     public void OnClick_CreateRoom(){
 
@@ -21,7 +23,14 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
         // Join or create room
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = 4;
-        PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+        // Check if the room existed or not
+        int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
+        if(index == -1){
+            PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+        }
+        else{
+            Debug.Log("The room has already existed");
+        }
  //       PhotonNetwork.LoadLevel(1);
     }
     public override void OnCreatedRoom()
@@ -32,5 +41,23 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Debug.Log("Room creation failed: " + message, this );
+    }
+     public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+   
+        foreach(RoomInfo info in roomList)
+        {   
+            if(info.RemovedFromList){
+                int index = _roomInfoLists.FindIndex(x => x.Name == info.Name);
+                if(index != -1){
+           
+                    _roomInfoLists.RemoveAt(index);
+                }
+            }
+            else{
+                _roomInfoLists.Add(info);
+            }
+           
+        }
     }
 }
