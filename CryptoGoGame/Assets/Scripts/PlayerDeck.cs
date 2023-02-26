@@ -26,7 +26,7 @@ public class PlayerDeck : MonoBehaviour
      private GameObject playZone; 
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         Debug.Log("PlayerDeck.Start() called");
 
