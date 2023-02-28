@@ -411,6 +411,8 @@
 "Assets/Scripts/CardDatabase.cs"
 "Assets/Scripts/CardToHand.cs"
 "Assets/Scripts/DragDrop.cs"
+"Assets/Scripts/Enemy.cs"
+"Assets/Scripts/MainPlayer.cs"
 "Assets/Scripts/Managers/GameSettings.cs"
 "Assets/Scripts/Managers/MasterManager.cs"
 "Assets/Scripts/Managers/ScriptableObjectSingleton.cs"

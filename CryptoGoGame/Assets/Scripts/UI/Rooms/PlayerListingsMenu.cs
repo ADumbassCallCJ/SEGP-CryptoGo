@@ -12,7 +12,22 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private PlayerListing _playerListing;
 
     [SerializeField]
+    private MainPlayer _player;
+
+    [SerializeField]
+    private MainPlayer _enemy;
+
+
+    [SerializeField]
     private Transform _content;
+    [SerializeField]
+    private Transform _mainPlayer;
+    [SerializeField]
+    private MainPlayer _enemyPlayer1;
+    [SerializeField]
+    private MainPlayer _enemyPlayer2;
+    [SerializeField]
+    private MainPlayer _enemyPlayer3;
 
     [SerializeField]
     private Text _readyUpText;
@@ -28,11 +43,18 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
     private bool _ready = false;
     private List<PlayerListing> _listings = new List<PlayerListing>(); 
+    private List<MainPlayer> _mainPlayersListTemp = new List<MainPlayer>();
+    private List<string> _transformListings = new List<string>{"MainPlayer", "EnemyPlayer (1)", "EnemyPlayer (2)","EnemyPlayer (3)"};
+    private Dictionary<int, MainPlayer> _enemyPlayerObjectList = new Dictionary<int, MainPlayer>();
 
     private void Awake(){
         Debug.Log("Call");
         GetCurrentRoomPlayers();
         ButtonsHide();
+      //  AddPlayerObject();
+        AddingEnemyPlayerObjectList();
+        CreatePlayerObjectOfCurrentRoomPlayers();
+       
     }
     private void ButtonsHide(){
         Debug.Log("ButtonsHide() call");
@@ -49,6 +71,11 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             }
             _readyUpText.text = "Waiting others ready";
         }
+    }
+    private void AddingEnemyPlayerObjectList(){
+        _enemyPlayerObjectList.Add(1, _enemyPlayer1);
+        _enemyPlayerObjectList.Add(2, _enemyPlayer2);
+        _enemyPlayerObjectList.Add(3, _enemyPlayer3);
     }
     public override void OnEnable()
     {
@@ -91,9 +118,54 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     }
     private void GetCurrentRoomPlayers(){
         foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
-            Debug.Log("Player : " + playerInfo.Value.NickName);
+            Debug.Log("Player : " + playerInfo.Value.NickName + " , Key: " + playerInfo.Key);
             AddPlayerListing(playerInfo.Value);
         }
+
+    }
+    private void CreatePlayerObjectOfCurrentRoomPlayers(){
+   //     _playersListTemp.Add(PhotonNetwork.LocalPlayer);
+        AddPlayerObject(PhotonNetwork.LocalPlayer, 0);
+        // foreach(Player playerInfo in PhotonNetwork.PlayerListOthers){
+        //     _playersListTemp.Add(playerInfo);
+        // }
+
+        for(int i = 0; i < PhotonNetwork.PlayerListOthers.Length;i++){
+            AddPlayerObject(PhotonNetwork.PlayerListOthers[i], i+1);
+        }
+    
+    }
+    private void AddPlayerObject(Player newPlayer, int position){
+        Debug.Log("Instantiate " + newPlayer.NickName);
+        // int index = _playersListTemp.FindIndex(x => x == newPlayer);
+        // if(index == -1){
+        //     _playersListTemp.Add(newPlayer);
+        // }  
+        MainPlayer playerObject;
+        GameObject playerPosition = GameObject.Find(_transformListings[position]);
+        if(newPlayer == PhotonNetwork.LocalPlayer){
+            playerObject = Instantiate(_player, playerPosition.transform);
+        }
+        else{
+            playerObject = Instantiate(_enemyPlayerObjectList[position], playerPosition.transform);
+        }
+        if(playerObject != null){
+            playerObject.SetPlayerInfo(newPlayer);
+            _mainPlayersListTemp.Add(playerObject);
+        }
+        // GameObject playerPosition = GameObject.Find(_transformListings[0]);
+        // MainPlayer playerObject = Instantiate(_player, playerPosition.transform);
+            //         GameObject playerPosition = GameObject.Find(_transformListings[playerInfo.Key-1]);
+            // MainPlayer playerObject;
+            // if(playerInfo.Value == PhotonNetwork.LocalPlayer){
+            //     Debug.Log("Local Player: " + playerInfo.Value.NickName);
+            //     playerObject = Instantiate(_player, playerPosition.transform);
+            // }
+            // else{
+            //     playerObject = Instantiate(_enemy, playerPosition.transform);
+            // }
+            
+            // playerObject.SetPlayerInfo(playerInfo.Value);
     }
     public void AddPlayerListing(Player newPlayer)
     {
@@ -109,17 +181,26 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         AddPlayerListing(newPlayer);
+        AddPlayerObject(newPlayer, PhotonNetwork.PlayerListOthers.Length);
     }
     public override void OnPlayerLeftRoom(Player otherPlayer){
         int index = _listings.FindIndex(x => x.Player == otherPlayer);
+        int indexMainPlayer = _mainPlayersListTemp.FindIndex(x => x.Player == otherPlayer);
         if(index != -1){
             Destroy(_listings[index].gameObject);
             _listings.RemoveAt(index);
         }
+        if(indexMainPlayer != -1){
+            Destroy(_mainPlayersListTemp[indexMainPlayer].gameObject);
+            _mainPlayersListTemp.RemoveAt(indexMainPlayer);
+        }
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        base.OnMasterClientSwitched(newMasterClient);
+       // base.OnMasterClientSwitched(newMasterClient);
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.LeaveRoom();
+        
     }
 
     [PunRPC]
@@ -135,5 +216,6 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     [PunRPC]
     private void RPC_StartingGame(){
         _readyUpText.gameObject.SetActive(false);
+        _readyButton.gameObject.SetActive(false);
     }
 }

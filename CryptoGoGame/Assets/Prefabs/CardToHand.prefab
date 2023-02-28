@@ -1542,6 +1542,7 @@ GameObject:
   - component: {fileID: 8769864791893153053}
   - component: {fileID: 8769864791893153051}
   - component: {fileID: 8769864791893153047}
+  - component: {fileID: -4128809833408729280}
   m_Layer: 5
   m_Name: CardToHand
   m_TagString: Card
@@ -1670,6 +1671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34cc554b73011f545a0635740ad8e162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickCard: {fileID: 0}
 --- !u!50 &8769864791893153042
 Rigidbody2D:
   serializedVersion: 4
@@ -1750,3 +1752,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34cc554b73011f545a0635740ad8e162, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickCard: {fileID: 0}
+--- !u!114 &-4128809833408729280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8769864791893153126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
