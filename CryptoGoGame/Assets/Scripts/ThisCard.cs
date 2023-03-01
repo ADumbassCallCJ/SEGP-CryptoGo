@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class ThisCard : MonoBehaviour
 {
@@ -35,25 +34,20 @@ public class ThisCard : MonoBehaviour
     public GameObject Hand;
     public int NumberOfCardsInDeck;
 
-    private Transform thisTF;
-    private Vector3 cardInitialPosition;
-    private bool isClicked = false;
     // Start is called before the first frame update
     void Start()
     {
-        thisTF = GetComponent<Transform>();
         cards.Add(new Card());
  //       cards[0] = CardDatabase.StaticCardList[thisId];
         CardBack = true;
         NumberOfCardsInDeck = PlayerDeck.DeckSize;
-        cardInitialPosition = transform.position;
         Debug.Log(NumberOfCardsInDeck);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //assign data to cards
+                //assign data to cards
         if(this.tag == "Clone"){
             Debug.Log("triggered");
             cards[0] = PlayerDeck.StaticDeck[NumberOfCardsInDeck-1];
@@ -64,24 +58,21 @@ public class ThisCard : MonoBehaviour
 
         //open cards if it is the Hand Panel(Main playuer)
         Hand = GameObject.Find("Hand");
- //       Debug.Log("this.transform.parent: " + this.transform.parent);
- //       Debug.Log("Hand.transform: " + Hand.transform);
+        Debug.Log("this.transform.parent: " + this.transform.parent);
+        Debug.Log("Hand.transform: " + Hand.transform);
         if(this.transform.parent == Hand.transform){
- //           Debug.Log("Hand Clone called");
+            Debug.Log("Hand Clone called");
             CardBack = false;
         }
         
 
-        // cards[0] = CardDatabase.StaticCardList[thisId];
+    //    cards[0] = CardDatabase.StaticCardList[thisId];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
         CardName = cards[0].Name;
         CardDescription = cards[0].Description;
         CardToolName = cards[0].ToolName;
         CardCombinedKits = cards[0].CombinedKits;
-
-;
-
 
         staticCardBack = CardBack;
 
@@ -159,31 +150,6 @@ public class ThisCard : MonoBehaviour
             
      }
 
-    // public void OnPointerClick(PointerEventData eventData)
-    // {
-    //     Debug.Log("You choose the card " + CardName);
-    //     Debug.Log(transform.position);
-    //     if(!isClicked){
-    //         GameObject ClickedCard = GameObject.Find("ClickedCard");
-    //         // Debug.Log(transform.parent);
-    //         transform.SetParent(ClickedCard.transform,false);
-    //         transform.localScale = new Vector3(0.7f,0.7f,1);
-    //     //  //   transform.parent = ClickedCard.transform;
-    //         // Debug.Log(transform.parent);
-    //         transform.position = ClickedCard.transform.position;
-    //         // Debug.Log(transform.position);
-    //     }
-    //     else{
-    //         isClicked = false;
-    //         GameObject Hand = GameObject.Find("Hand");
-    //         transform.SetParent(Hand.transform, false);
-    //         transform.localScale = new Vector3(1f,1f,1);
-    //         transform.position = cardInitialPosition;
-    //         Debug.Log(transform.position);
-    //     }
-
-    
-    // }
 }
 
 

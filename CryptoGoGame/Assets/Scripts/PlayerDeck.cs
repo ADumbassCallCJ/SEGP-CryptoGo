@@ -21,22 +21,11 @@ public class PlayerDeck : MonoBehaviour
 
     public GameObject CardBack;
     public GameObject Enemy;
-    public static GameObject pickCard;
-    public static GameObject pickCardZone;
-     private GameObject playZone; 
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("PlayerDeck.Start() called");
-
-        pickCard = GameObject.Find("PickCard");
-        pickCardZone = GameObject.Find("PickCardZone");
-        pickCard.SetActive(false);
-        // playZone = GameObject.Find("PlayZone");
-        // pickCard.SetActive(false);
-
-
         NumberOfPlayers = 4;
         DeckSize = CardDatabase.StaticCardList.Count*NumberOfPlayers;
         enemyPanelNameListSize = enemyPanelNameList.Count;
@@ -59,8 +48,7 @@ public class PlayerDeck : MonoBehaviour
         // Give Main Player Card
         for(int i = 0; i < numberOfDrawCard; i++){
             yield return new WaitForSeconds(1);
-            Hand = GameObject.Find("Hand");
-            GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation,Hand.transform);
+            GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation);
             _CardToHand.tag ="Clone";
         }
         StartCoroutine(GiveEnemyCards(numberOfDrawCard,2,enemyPanelNameList[enemyPanelNameListSize-1]));
