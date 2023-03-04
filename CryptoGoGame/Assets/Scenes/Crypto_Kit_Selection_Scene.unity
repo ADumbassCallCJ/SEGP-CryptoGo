@@ -294,7 +294,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ab7cf232a49135344bcd12d3d32ee651, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7ec299008ae2882479ce02bcb459e30b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -760,7 +760,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: d4c998a821c9db047acc840ce7bdc492, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b43ec67f55666094b8db7b3311f522ab, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -788,8 +788,8 @@ GameObject:
   m_Component:
   - component: {fileID: 919343227}
   - component: {fileID: 919343230}
-  - component: {fileID: 919343229}
   - component: {fileID: 919343228}
+  - component: {fileID: 919343231}
   m_Layer: 5
   m_Name: CK1
   m_TagString: Untagged
@@ -857,7 +857,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 919343229}
+  m_TargetGraphic: {fileID: 919343231}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -873,7 +873,15 @@ MonoBehaviour:
           m_StringArgument: CryptoKit1Scene
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &919343229
+--- !u!222 &919343230
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919343226}
+  m_CullTransparentMesh: 1
+--- !u!114 &919343231
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -893,7 +901,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4e655af519d1c0f479564bdab2300792, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9dc07a9ec87929a4abdd2051df4eade5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -903,14 +911,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!222 &919343230
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919343226}
-  m_CullTransparentMesh: 1
 --- !u!1 &1285535250
 GameObject:
   m_ObjectHideFlags: 0

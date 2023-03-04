@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "64969314995",
+    "project_id": "segp-crypto-go",
+    "storage_bucket": "segp-crypto-go.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64969314995:android:2b5320e3af16556cef16c6",
+        "android_client_info": {
+          "package_name": "com.GroupE.CryptoGo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64969314995-ak7eu14t3ums0r4k4bid4f7fo7gtcpve.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfbsKu1tFZQpHmkUA4SAQlF_zt-S0TNM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64969314995-ak7eu14t3ums0r4k4bid4f7fo7gtcpve.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
