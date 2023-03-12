@@ -41,6 +41,12 @@ MonoBehaviour:
   - RespawnSpaceship
   - RPC_ChangeReadyState
   - RPC_StartingGame
+  - AddCardsToDeck
+  - RPC_GiveCards
+  - RPC_GiveCardsToPlayer
+  - RPC_playerDeckStart
+  - RPC_ShuffleCard
+  - RPC_InstantiateCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

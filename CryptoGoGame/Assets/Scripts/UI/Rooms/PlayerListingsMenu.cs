@@ -17,6 +17,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private MainPlayer _enemy;
 
+    [SerializeField]
+    private GameObject _CardTohandPrefab;
 
     [SerializeField]
     private Transform _content;
@@ -43,6 +45,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
     private bool _ready = false;
     private List<PlayerListing> _listings = new List<PlayerListing>(); 
+    public List<PlayerListing> PlayerListings{get {return _listings;}}
     private List<MainPlayer> _mainPlayersListTemp = new List<MainPlayer>();
     private List<string> _transformListings = new List<string>{"MainPlayer", "EnemyPlayer (1)", "EnemyPlayer (2)","EnemyPlayer (3)"};
     private Dictionary<int, MainPlayer> _enemyPlayerObjectList = new Dictionary<int, MainPlayer>();
@@ -109,8 +112,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
                     return;
                 }
             }
-            playerDeck.StartGame();
-            this.photonView.RPC("RPC_StartingGame", RpcTarget.All);
+          //  playerDeck.StartGame();
+            this.photonView.RPC("RPC_StartingGame", RpcTarget.AllViaServer);
 //            _readyUpText.gameObject.SetActive(false);
             _readyButton.gameObject.SetActive(false);
             _startButton.gameObject.SetActive(false);
@@ -217,5 +220,19 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private void RPC_StartingGame(){
         _readyUpText.gameObject.SetActive(false);
         _readyButton.gameObject.SetActive(false);
+
+        GameObject Hand = GameObject.Find("Hand");
+      //  MasterManager.NetworkInstantiate(_CardTohandPrefab, Hand.transform.position, Quaternion.identity, Hand);
+        
+        GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
+        GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_ShuffleCard", RpcTarget.All);
+        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, playerInfo.Value, 6);
+        }
+        GameObject.Find("Background Image").GetComponent<PlayerDeck>().InstantiateCards(6);
+        
+    
+    
+        // playerDeck.StartGame();
     }
 }

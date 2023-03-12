@@ -13,8 +13,8 @@ public class PickCard : MonoBehaviour, IPointerClickHandler
     void Start()
     {
         handZone = transform.parent.gameObject;
-        // pickCard = GameObject.Find("PickCard");
-        // pickCardZone = GameObject.Find("PickCardZone");
+         pickCard = GameObject.Find("PickCard");
+         pickCardZone = GameObject.Find("PickCardZone");
         // Debug.Log(pickCard);
     }
 

@@ -9,7 +9,8 @@ public class ThisCard : MonoBehaviour
     public List<Card> cards = new List<Card>();
 
     public int thisId;
-    public int Id;
+    public int thisCardId{get {return this.thisId;} set {this.thisId = value;}}
+    private int Id;
     public string CardType;
     public string CardName;
     public string CardDescription;
@@ -47,7 +48,7 @@ public class ThisCard : MonoBehaviour
         CardBack = true;
         NumberOfCardsInDeck = PlayerDeck.DeckSize;
         cardInitialPosition = transform.position;
-        Debug.Log(NumberOfCardsInDeck);
+     //   Debug.Log(NumberOfCardsInDeck);
     }
 
     // Update is called once per frame
@@ -56,9 +57,10 @@ public class ThisCard : MonoBehaviour
         //assign data to cards
         if(this.tag == "Clone"){
             Debug.Log("triggered");
-            cards[0] = PlayerDeck.StaticDeck[NumberOfCardsInDeck-1];
-            NumberOfCardsInDeck--;
-            PlayerDeck.DeckSize--;
+        //    cards[0] = PlayerDeck.StaticDeck[this.Id];
+       //     cards[0] = PlayerDeck.StaticDeck[NumberOfCardsInDeck-1];
+     //       NumberOfCardsInDeck--;
+   //        PlayerDeck.DeckSize--;
             this.tag = "Untagged";
         }
 
@@ -72,7 +74,7 @@ public class ThisCard : MonoBehaviour
         }
         
 
-        // cards[0] = CardDatabase.StaticCardList[thisId];
+         cards[0] = CardDatabase.StaticCardList[this.thisId];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
         CardName = cards[0].Name;

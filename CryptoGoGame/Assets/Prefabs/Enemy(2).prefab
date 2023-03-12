@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 5206644726127656142}
   - component: {fileID: 5206644726127656143}
   m_Layer: 5
-  m_Name: EnemyHand
+  m_Name: EnemyHand (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
