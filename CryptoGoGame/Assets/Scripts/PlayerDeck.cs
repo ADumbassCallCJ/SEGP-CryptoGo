@@ -106,8 +106,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         foreach(Card card in mainPlayerCards){
             Debug.Log(player + " has: " + card.Name);
         }
-        int indexPlayer1 = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(player);
-        //List<Card> mainPlayerCardsPlay = playerCardsPlay.Values.ElementAt(indexPlayer1);
+ 
         int cardIndexInMainPlayerCards = mainPlayerCards.FindIndex(x => x.Id == cardId);
         Debug.Log("Card found at " +cardIndexInMainPlayerCards);
         // // add playerCardsPlay
@@ -118,7 +117,19 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
        //     Debug.Log(player + " played " + mainPlayerCardsPlay[mainPlayerCardsPlay.Count-1].Name + " card");
 
             // add new play card to play card list to server
-
+            int indexPlayer1 = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(player);
+            List<Card> mainPlayerCardsPlay = playerListingsMenu.PlayerCardsPlay.Values.ElementAt(indexPlayer1);
+            
+            mainPlayerCardsPlay.Add(mainPlayerCards[cardIndexInMainPlayerCards]);
+            Debug.Log("MainPlayerCardsPlay size = " +mainPlayerCardsPlay.Count);
+            int[] myCardsPlay= new int[mainPlayerCardsPlay.Count];
+            int b = 0;
+            foreach(Card card in mainPlayerCardsPlay){
+                myCardsPlay[b++] = card.Id;
+            }
+            // ExitGames.Client.Photon.Hashtable setCardsPlayValue = new ExitGames.Client.Photon.Hashtable();
+            // setCardsPlayValue["PlayerCardsPlay"] = myCardsPlay;
+            // Debug.Log(player.SetCustomProperties(setCardsPlayValue));
 
             mainPlayerCards.RemoveAt(cardIndexInMainPlayerCards);
             // update server player list
@@ -128,6 +139,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                 myCards[a++] = card.Id;
             }
             ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
+            setCardsValue["PlayerCardsPlay"] = myCardsPlay;
             setCardsValue["PlayerCards"] = myCards;
             Debug.Log(player.SetCustomProperties(setCardsValue));
 

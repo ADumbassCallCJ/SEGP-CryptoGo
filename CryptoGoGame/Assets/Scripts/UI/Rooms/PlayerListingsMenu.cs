@@ -258,7 +258,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
          List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
          
          playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
-         
+            playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
          
 
          Debug.Log("playerDecks size = " + playerDecks.Count);
@@ -305,10 +305,12 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             List<Card> playerCards = new List<Card>();
             for(int i = 0; i < cardIdArray.Length; i++){
                 playerCards.Add(CardDatabase.StaticCardList[cardIdArray[i]]);
+               
             }
             bool existedPlayer = playerDecks.ContainsKey(targetPlayer);
             if(!existedPlayer){
                 playerDecks.Add(targetPlayer, playerCards);
+                playerCardsPlay.Add(targetPlayer, new List<Card>());
 
             }
             else{
@@ -317,17 +319,47 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
                 
          
                 
-                Debug.Log("playerDecks updated");
+          //      Debug.Log("playerDecks updated");
             }
             int index = playerDecks.Keys.ToList().IndexOf(targetPlayer);
             List<Card> targetPlayerCards = playerDecks.Values.ElementAt(index);
             foreach(Card card in targetPlayerCards){
                 Debug.Log(targetPlayer.NickName + " updated " + card.Name);
             }
-            Debug.Log("playerDecks size = " + playerDecks.Count);   
+           // Debug.Log("playerDecks size = " + playerDecks.Count);   
         }
 
-        
+
+
+        object arrayObject1;
+        if (targetPlayer.CustomProperties.TryGetValue("PlayerCardsPlay", out arrayObject1)) {
+            int[] playCardIdArray = (int[])arrayObject1;
+            Debug.Log("The length of the array is: " + playCardIdArray.Length);
+            List<Card> playerCardsPlayList = new List<Card>();
+            for(int i = 0; i < playCardIdArray.Length; i++){
+                playerCardsPlayList.Add(CardDatabase.StaticCardList[playCardIdArray[i]]);
+               
+            }
+            bool existedPlayer = PlayerCardsPlay.ContainsKey(targetPlayer);
+            if(!existedPlayer){
+                playerCardsPlay.Add(targetPlayer, playerCardsPlayList);
+
+            }
+            else{
+             //   int indexMainPlayer = playerDecks.Keys.ToList().IndexOf(targetPlayer);
+                playerCardsPlay[targetPlayer] = playerCardsPlayList;
+                
+         
+                
+                Debug.Log("playerCardsPlay updated, size = " + playerCardsPlay.Count);
+            }
+            int index = playerDecks.Keys.ToList().IndexOf(targetPlayer);
+            List<Card> targetPlayerCardsPlay = playerCardsPlay.Values.ElementAt(index);
+            foreach(Card card in targetPlayerCardsPlay){
+                Debug.Log(targetPlayer.NickName + " played " + card.Name);
+            }
+            Debug.Log("playerCardsPlay size = " + playerCardsPlayList.Count);   
+        }
 
     }
 
