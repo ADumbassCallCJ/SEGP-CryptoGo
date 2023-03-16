@@ -8,6 +8,14 @@ public class ThisCard : MonoBehaviour
 {
     public List<Card> cards = new List<Card>();
 
+    [SerializeField]
+    private Card card; 
+    public Card Card{
+        get{
+            return card;
+        }
+    }
+
     public int thisId;
     public int thisCardId{get {return this.thisId;} set {this.thisId = value;}}
     private int Id;
@@ -56,7 +64,7 @@ public class ThisCard : MonoBehaviour
     {
         //assign data to cards
         if(this.tag == "Clone"){
-            Debug.Log("triggered");
+//            Debug.Log("triggered");
         //    cards[0] = PlayerDeck.StaticDeck[this.Id];
        //     cards[0] = PlayerDeck.StaticDeck[NumberOfCardsInDeck-1];
      //       NumberOfCardsInDeck--;
@@ -74,7 +82,8 @@ public class ThisCard : MonoBehaviour
         }
         
 
-         cards[0] = CardDatabase.StaticCardList[this.thisId];
+        cards[0] = CardDatabase.StaticCardList[this.thisId];
+        card = cards[0];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
         CardName = cards[0].Name;

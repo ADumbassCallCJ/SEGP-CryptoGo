@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -50,8 +51,27 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private List<string> _transformListings = new List<string>{"MainPlayer", "EnemyPlayer (1)", "EnemyPlayer (2)","EnemyPlayer (3)"};
     private Dictionary<int, MainPlayer> _enemyPlayerObjectList = new Dictionary<int, MainPlayer>();
 
+    private  Dictionary<Player, List<Card>> playerDecks = new Dictionary<Player, List<Card>>();
+    public Dictionary<Player,List<Card>> PlayerDecks{
+        get {return playerDecks;}
+        set{
+            playerDecks = value;
+        }
+    }
+    public Dictionary<Player, List<Card>> playerCardsPlay = new Dictionary<Player, List<Card>>();
+        public Dictionary<Player,List<Card>> PlayerCardsPlay{
+        get {return playerCardsPlay;}
+        set{
+            playerCardsPlay = value;
+        }
+    }
+
+ //   private ExitGames.Client.Photon.Hashtable m_playerCustomProperties = ExitGames.Client.Photon.Hashtable();
+    private int cardNumber;
+
     private void Awake(){
         Debug.Log("Call");
+        playerDeck = GameObject.Find("Background Image").GetComponent<PlayerDeck>();
         GetCurrentRoomPlayers();
         ButtonsHide();
       //  AddPlayerObject();
@@ -94,7 +114,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             else{
                 _readyUpText.text = "Unready";
             }
-            
+      
         }
     }
     public void OnClick_ReadyUp(){
@@ -181,6 +201,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         
         }
     }
+
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         AddPlayerListing(newPlayer);
@@ -202,6 +223,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     {
        // base.OnMasterClientSwitched(newMasterClient);
         PhotonNetwork.CurrentRoom.IsOpen = false;
+        playerDeck.ResetDeck();
         PhotonNetwork.LeaveRoom();
         
     }
@@ -226,13 +248,87 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         
         GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
         GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_ShuffleCard", RpcTarget.All);
-        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
-            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, playerInfo.Value, 6);
-        }
-        GameObject.Find("Background Image").GetComponent<PlayerDeck>().InstantiateCards(6);
+        // foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+          //  GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, playerInfo.Value, 6);
+       // }
+    //    GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, th, 6);
+    //    GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer,6);
+
+
+         List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
+         
+         playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+         
+         
+
+         Debug.Log("playerDecks size = " + playerDecks.Count);
+         int[] myCards = new int[currentPlayerCards.Count];
+         int i = 0;
+         foreach(Card card in currentPlayerCards){
+            myCards[i++] = card.Id;
+            
+         }
+         
+    //     Debug.Log(myCards.Length);
+    //     // playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+        ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
+    //   //  setCardsValue.Add("playerCards",myCards);
+         setCardsValue["PlayerCards"] = myCards;
+         Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
+
         
+        
+        playerDeck.InstantiateCards(6, PhotonNetwork.LocalPlayer);
+       // Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("playerCards"));
+        
+       // Debug.Log("playerDecks size = " + playerDecks.Count);
     
+
     
         // playerDeck.StartGame();
     }
+
+    
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+        if (targetPlayer == null || changedProps == null) {
+            return;
+        }
+        base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
+
+        Debug.Log(targetPlayer.NickName + " properties changed");
+        
+        object arrayObject;
+        if (targetPlayer.CustomProperties.TryGetValue("PlayerCards", out arrayObject)) {
+            int[] cardIdArray = (int[])arrayObject;
+            Debug.Log("The length of the array is: " + cardIdArray.Length);
+            List<Card> playerCards = new List<Card>();
+            for(int i = 0; i < cardIdArray.Length; i++){
+                playerCards.Add(CardDatabase.StaticCardList[cardIdArray[i]]);
+            }
+            bool existedPlayer = playerDecks.ContainsKey(targetPlayer);
+            if(!existedPlayer){
+                playerDecks.Add(targetPlayer, playerCards);
+
+            }
+            else{
+             //   int indexMainPlayer = playerDecks.Keys.ToList().IndexOf(targetPlayer);
+                playerDecks[targetPlayer] = playerCards;
+                
+         
+                
+                Debug.Log("playerDecks updated");
+            }
+            int index = playerDecks.Keys.ToList().IndexOf(targetPlayer);
+            List<Card> targetPlayerCards = playerDecks.Values.ElementAt(index);
+            foreach(Card card in targetPlayerCards){
+                Debug.Log(targetPlayer.NickName + " updated " + card.Name);
+            }
+            Debug.Log("playerDecks size = " + playerDecks.Count);   
+        }
+
+        
+
+    }
+
 }

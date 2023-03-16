@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayUnplayCard : MonoBehaviour
+using Photon.Pun;
+using Photon.Realtime;
+
+public class PlayUnplayCard : MonoBehaviourPunCallbacks
 {
     // Start is called before the first frame update
     private GameObject cardSelected; 
@@ -11,6 +14,11 @@ public class PlayUnplayCard : MonoBehaviour
     private GameObject pickCard;
     private GameObject pickCardZone;
     private GameObject playZone;
+
+    private PlayerDeck playerDeck;
+
+    
+
    
     
     void Start(){
@@ -18,6 +26,7 @@ public class PlayUnplayCard : MonoBehaviour
         pickCard = GameObject.Find("PickCard");
         playZone = GameObject.Find("PlayZone");
         pickCardZone = GameObject.Find("PickCardZone");
+        playerDeck = GameObject.Find("Background Image").GetComponent<PlayerDeck>();
     }
 
     // Update is called once per frame
@@ -44,12 +53,27 @@ public class PlayUnplayCard : MonoBehaviour
         if(pickCardZone.transform.GetChild(0).gameObject){
             cardSelected =  pickCardZone.transform.GetChild(0).gameObject;
         }
-        Debug.Log("Play card");
-      //  playZone.SetActive(true);
-        cardSelected.transform.localScale = new Vector3(0.8f,0.8f,1);
-        cardSelected.transform.SetParent(playZone.transform);
-        pickCard.SetActive(false);
-        cardSelected = null;
+
+        Debug.Log(playerDeck.GetCurrentPlayerTurn());
+        if(playerDeck.GetCurrentPlayerTurn() == PhotonNetwork.LocalPlayer){
+            Debug.Log( PhotonNetwork.LocalPlayer + " play card");
+    ///      playZone.SetActive(true);
+            cardSelected.transform.localScale = new Vector3(0.8f,0.8f,1);
+            cardSelected.transform.SetParent(playZone.transform);
+            Card card = cardSelected.GetComponent<ThisCard>().Card;
+            Debug.Log(card.Name);
+            pickCard.SetActive(false);
+            cardSelected = null;
+            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_PlayCards", RpcTarget.AllBuffered, playerDeck.GetCurrentPlayerTurn(), card.Id);
+         //   playerDeck.PlayCards(PhotonNetwork.LocalPlayer, card);
+            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_NextTurn", RpcTarget.All);
+
+        }
+
 
     }
+
+
+    
+
 }

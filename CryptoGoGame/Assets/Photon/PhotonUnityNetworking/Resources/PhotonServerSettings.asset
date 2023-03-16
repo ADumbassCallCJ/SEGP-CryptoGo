@@ -47,6 +47,10 @@ MonoBehaviour:
   - RPC_playerDeckStart
   - RPC_ShuffleCard
   - RPC_InstantiateCards
+  - RPC_NextTurn
+  - RPC_PlayCards
+  - RPC_PrintPlayCardsOfPlayer
+  - PlayCards
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

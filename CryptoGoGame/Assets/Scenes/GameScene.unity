@@ -1181,7 +1181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985caad3143707643aa2d00fab9bc0a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
   container: []
   NumberOfPlayers: 0
   enemyPanelNameListSize: 0
@@ -1578,6 +1577,33 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4543750594200823288, guid: 3bc2751f5e841da4fa2fd168f55b6125, type: 3}
   m_PrefabInstance: {fileID: 1840068812}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1840068814 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7396828953496471293, guid: 3bc2751f5e841da4fa2fd168f55b6125, type: 3}
+  m_PrefabInstance: {fileID: 1840068812}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1840068815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1840068814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 4
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1868776555
 GameObject:
   m_ObjectHideFlags: 0

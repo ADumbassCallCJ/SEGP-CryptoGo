@@ -15,7 +15,7 @@ public class DragDrop : MonoBehaviour
       dropZone = GameObject.Find("DropZone");
       handZone = GameObject.Find("Hand");
       startPosition = transform.position;
-      Debug.Log(startPosition);
+ //    Debug.Log(startPosition);
     }
 
     // Update is called once per frame
@@ -42,7 +42,7 @@ public class DragDrop : MonoBehaviour
   //      dropZone = null;    
     }
     public void StartDrag(){
-        Debug.Log(transform.parent);
+    //    Debug.Log(transform.parent);
     //    startPosition = transform.position;
         isDragging = true;
 
@@ -56,8 +56,8 @@ public class DragDrop : MonoBehaviour
             transform.localScale = new Vector3(1.4f,1.4f,1);
         }
         else{
-            Debug.Log("aaaa");
-            Debug.Log(startPosition);
+       //     Debug.Log("aaaa");
+        //    Debug.Log(startPosition);
             transform.position = new Vector2(startPosition.x, startPosition.y);
 //            transform.SetParent(handZone.transform);
             transform.localScale = new Vector3(1f,1f,1);
