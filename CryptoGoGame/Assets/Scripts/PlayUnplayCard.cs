@@ -11,9 +11,11 @@ public class PlayUnplayCard : MonoBehaviourPunCallbacks
     private GameObject cardSelected; 
 
     private GameObject handZone;
+    private GameObject auxiliaryZone;
     private GameObject pickCard;
     private GameObject pickCardZone;
     private GameObject playZone;
+
 
     private PlayerDeck playerDeck;
 
@@ -23,10 +25,12 @@ public class PlayUnplayCard : MonoBehaviourPunCallbacks
     
     void Start(){
         handZone = GameObject.Find("Hand");
+        auxiliaryZone = GameObject.Find("AuxiliaryCards");
         pickCard = GameObject.Find("PickCard");
         playZone = GameObject.Find("PlayZone");
         pickCardZone = GameObject.Find("PickCardZone");
         playerDeck = GameObject.Find("Background Image").GetComponent<PlayerDeck>();
+       
     }
 
     // Update is called once per frame
@@ -38,11 +42,26 @@ public class PlayUnplayCard : MonoBehaviourPunCallbacks
         // }
     }
     public void UnpickCard(){
+        GameObject comebackZone;
         if(pickCardZone.transform.GetChild(0).gameObject){
             cardSelected =  pickCardZone.transform.GetChild(0).gameObject;
+            
         }
+        if(cardSelected.CompareTag("AuxiliaryCard")){
+            comebackZone = auxiliaryZone;
+            cardSelected.transform.localScale = new Vector3(1.1f,1.1f,1);
+        }
+        else{
+            comebackZone = handZone;
+    
+        }
+        Debug.Log(comebackZone);
+        
+        cardSelected.transform.SetParent(comebackZone.transform);
         cardSelected.transform.localScale = new Vector3(1f,1f,1);
-        cardSelected.transform.SetParent(handZone.transform);
+        if(!playerDeck.PlayCardButton.active){
+            playerDeck.PlayCardButton.SetActive(true);
+        }
         pickCard.SetActive(false);
         cardSelected = null;
 

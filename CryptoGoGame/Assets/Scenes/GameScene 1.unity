@@ -1399,6 +1399,7 @@ GameObject:
   - component: {fileID: 1434377407}
   - component: {fileID: 1434377408}
   - component: {fileID: 1434377409}
+  - component: {fileID: 1434377410}
   m_Layer: 5
   m_Name: Background Image
   m_TagString: Untagged
@@ -1515,6 +1516,7 @@ MonoBehaviour:
   Hand: {fileID: 0}
   CardToHand: {fileID: 8769864791893153126, guid: fe9f888f40766d64fa9121c741d1fefd, type: 3}
   CardBack: {fileID: 1695912882921246510, guid: 13841b66a727d6142bf9c1964e74a8e3, type: 3}
+  auxilityCardPrefab: {fileID: 0}
   Enemy: {fileID: 0}
 --- !u!114 &1434377409
 MonoBehaviour:
@@ -1526,6 +1528,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: daa4fa429fbc94645a3035641ba46886, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1434377410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434377403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6508307f395d1fa41a8a24c529a203df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1441184238

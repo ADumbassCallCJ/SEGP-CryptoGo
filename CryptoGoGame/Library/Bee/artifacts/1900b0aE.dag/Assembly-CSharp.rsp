@@ -405,6 +405,7 @@
 "Assets/Photon/PhotonLibs/WebSocket/SocketWebTcp.cs"
 "Assets/Photon/PhotonLibs/WebSocket/WebSocket.cs"
 "Assets/Photon/PhotonRealtime/Demos/DemoLoadBalancing/ConnectAndJoinRandomLb.cs"
+"Assets/Scripts/AuxiliaryCardDatabase.cs"
 "Assets/Scripts/Card.cs"
 "Assets/Scripts/CardBack.cs"
 "Assets/Scripts/CardBackPrefab.cs"

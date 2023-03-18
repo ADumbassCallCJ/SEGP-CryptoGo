@@ -56,6 +56,13 @@ public class ThisCard : MonoBehaviour
         CardBack = true;
         NumberOfCardsInDeck = PlayerDeck.DeckSize;
         cardInitialPosition = transform.position;
+        GameObject[] enemyPlayZones = GameObject.FindGameObjectsWithTag("EnemyPlayZone");
+        for(int i = 0; i < enemyPlayZones.Length; i++){
+            if(this.transform.parent == enemyPlayZones[i].transform){
+                CardBack = false;
+            }
+        }
+
      //   Debug.Log(NumberOfCardsInDeck);
     }
 
@@ -81,6 +88,14 @@ public class ThisCard : MonoBehaviour
             CardBack = false;
         }
         
+
+        // if(this.transform.parent == GameObject.Find("EnemyPlayZone (1)").transform || 
+        // this.transform.parent == GameObject.Find("EnemyPlayZone (2)").transform ||
+        //     this.transform.parent == GameObject.Find("EnemyPlayZone (3)").transform 
+        //  ){
+        //     CardBack = false;
+        //  }
+
 
         cards[0] = CardDatabase.StaticCardList[this.thisId];
         card = cards[0];

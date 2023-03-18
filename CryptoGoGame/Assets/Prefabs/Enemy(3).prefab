@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4864512510179888983}
   m_Layer: 5
   m_Name: Enemy(3)
-  m_TagString: Untagged
+  m_TagString: EnemyPlayZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -432,11 +432,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 973380724740555821, guid: 8504aba0a503cfb41bb22193ee717470, type: 3}
       propertyPath: m_Name
+      value: EnemyPlayZone (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 973380724740555821, guid: 8504aba0a503cfb41bb22193ee717470, type: 3}
+      propertyPath: m_TagString
       value: EnemyPlayZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 973380724740555822, guid: 8504aba0a503cfb41bb22193ee717470, type: 3}
+      propertyPath: m_Maskable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 973380724740555823, guid: 8504aba0a503cfb41bb22193ee717470, type: 3}
       propertyPath: m_Spacing
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8504aba0a503cfb41bb22193ee717470, type: 3}

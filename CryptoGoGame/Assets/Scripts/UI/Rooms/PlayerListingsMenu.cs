@@ -51,11 +51,19 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private List<string> _transformListings = new List<string>{"MainPlayer", "EnemyPlayer (1)", "EnemyPlayer (2)","EnemyPlayer (3)"};
     private Dictionary<int, MainPlayer> _enemyPlayerObjectList = new Dictionary<int, MainPlayer>();
 
+
     private  Dictionary<Player, List<Card>> playerDecks = new Dictionary<Player, List<Card>>();
     public Dictionary<Player,List<Card>> PlayerDecks{
         get {return playerDecks;}
         set{
             playerDecks = value;
+        }
+    }
+     private  Dictionary<Player, List<Card>> tempPlayerDecks = new Dictionary<Player, List<Card>>();
+    public Dictionary<Player,List<Card>> TempPlayerDecks{
+        get {return tempPlayerDecks;}
+        set{
+            tempPlayerDecks = value;
         }
     }
     public Dictionary<Player, List<Card>> playerCardsPlay = new Dictionary<Player, List<Card>>();
@@ -257,8 +265,9 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
          List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
          
-         playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
-            playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
+        playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+        
+        playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
          
 
          Debug.Log("playerDecks size = " + playerDecks.Count);
@@ -278,7 +287,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
         
         
-        playerDeck.InstantiateCards(6, PhotonNetwork.LocalPlayer);
+        playerDeck.InstantiateCards(6,2 ,PhotonNetwork.LocalPlayer);
        // Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("playerCards"));
         
        // Debug.Log("playerDecks size = " + playerDecks.Count);
@@ -310,6 +319,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             bool existedPlayer = playerDecks.ContainsKey(targetPlayer);
             if(!existedPlayer){
                 playerDecks.Add(targetPlayer, playerCards);
+                tempPlayerDecks.Add(targetPlayer,playerCards);
                 playerCardsPlay.Add(targetPlayer, new List<Card>());
 
             }
@@ -351,14 +361,14 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
                 
          
                 
-                Debug.Log("playerCardsPlay updated, size = " + playerCardsPlay.Count);
+               // Debug.Log("playerCardsPlay updated, size = " + playerCardsPlayList.Count);
             }
             int index = playerDecks.Keys.ToList().IndexOf(targetPlayer);
             List<Card> targetPlayerCardsPlay = playerCardsPlay.Values.ElementAt(index);
-            foreach(Card card in targetPlayerCardsPlay){
-                Debug.Log(targetPlayer.NickName + " played " + card.Name);
-            }
-            Debug.Log("playerCardsPlay size = " + playerCardsPlayList.Count);   
+            // foreach(Card card in targetPlayerCardsPlay){
+            //     Debug.Log(targetPlayer.NickName + " played " + card.Name);
+            // }
+            // Debug.Log("playerCardsPlay size = " + playerCardsPlayList.Count);   
         }
 
     }
