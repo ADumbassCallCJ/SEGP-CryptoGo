@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using Photon.Pun;
 using Photon.Realtime;
@@ -232,6 +233,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
        // base.OnMasterClientSwitched(newMasterClient);
         PhotonNetwork.CurrentRoom.IsOpen = false;
         playerDeck.ResetDeck();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         PhotonNetwork.LeaveRoom();
         
     }
@@ -255,7 +257,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
       //  MasterManager.NetworkInstantiate(_CardTohandPrefab, Hand.transform.position, Quaternion.identity, Hand);
         
         GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
-        GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_ShuffleCard", RpcTarget.All);
+        playerDeck.ShuffleCard();
+     //   GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_ShuffleCard", RpcTarget.All);
         // foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
           //  GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, playerInfo.Value, 6);
        // }
@@ -263,10 +266,19 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     //    GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer,6);
 
 
-         List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
+        List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
          
         playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
         
+        ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
+        Debug.Log("playerCardsplay size = " + playerCardsPlay.Count);
+        if(playerCardsPlay.Count > 0){
+            playerCardsPlay = new Dictionary<Player, List<Card>>();
+            int[] myPlayCards = new int[0];
+            setCardsValue["PlayerCardsPlay"] = myPlayCards;
+            Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
+            
+        }
         playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
          
 
@@ -280,7 +292,6 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
          
     //     Debug.Log(myCards.Length);
     //     // playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
-        ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
     //   //  setCardsValue.Add("playerCards",myCards);
          setCardsValue["PlayerCards"] = myCards;
          Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
@@ -296,8 +307,6 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     
         // playerDeck.StartGame();
     }
-
-    
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
         if (targetPlayer == null || changedProps == null) {
@@ -310,7 +319,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         object arrayObject;
         if (targetPlayer.CustomProperties.TryGetValue("PlayerCards", out arrayObject)) {
             int[] cardIdArray = (int[])arrayObject;
-            Debug.Log("The length of the array is: " + cardIdArray.Length);
+            Debug.Log(targetPlayer.NickName + " , The length of the array is: " + cardIdArray.Length);
             List<Card> playerCards = new List<Card>();
             for(int i = 0; i < cardIdArray.Length; i++){
                 playerCards.Add(CardDatabase.StaticCardList[cardIdArray[i]]);
@@ -344,7 +353,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         object arrayObject1;
         if (targetPlayer.CustomProperties.TryGetValue("PlayerCardsPlay", out arrayObject1)) {
             int[] playCardIdArray = (int[])arrayObject1;
-            Debug.Log("The length of the array is: " + playCardIdArray.Length);
+            Debug.Log("The length of the array cards played is: " + playCardIdArray.Length);
             List<Card> playerCardsPlayList = new List<Card>();
             for(int i = 0; i < playCardIdArray.Length; i++){
                 playerCardsPlayList.Add(CardDatabase.StaticCardList[playCardIdArray[i]]);
@@ -358,6 +367,10 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             else{
              //   int indexMainPlayer = playerDecks.Keys.ToList().IndexOf(targetPlayer);
                 playerCardsPlay[targetPlayer] = playerCardsPlayList;
+                if(targetPlayer == PhotonNetwork.LocalPlayer){
+
+                    playerDeck.updateCardObjects(PhotonNetwork.LocalPlayer);
+                }
                 
          
                 

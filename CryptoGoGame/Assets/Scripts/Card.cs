@@ -5,32 +5,64 @@ using UnityEngine;
 
 public class Card
 {
-    public int Id;
-    public string TypeCard;
-    public string Name;
-    public string Description;
-    public string ToolName;
-    public List<string> CombinedKits;
+    private int id;
+    public int Id{
+        get{return id;}
+    }
+    private string typeCard;
+    public string TypeCard{
+        get{return typeCard;}
+    }
+
+    private string name;
+    public string Name{
+        get{return name;}
+    }
+
+    private string description;
+    public string Description{
+        get{return description;}
+    }
+
+    private string toolName;
+    public string ToolName{
+        get{return toolName;}
+    }
+
+    private List<string> combinedKits;
+    public List<string> CombinedKits{
+        get{return combinedKits;}
+        set{
+            combinedKits = value;
+        }
+    }
+
+    private string securityLevel;
+    public string SecurityLevel{
+        get{return securityLevel;}
+    }
 
     public Card(){
 
     }
     public Card(int Id, string TypeCard, string Name, string Description, string ToolName,
-                 List<string> CombinedKits)
+                 List<string> CombinedKits, string securityLevel)
     {
-        this.Id = Id;
-        this.TypeCard = TypeCard;
-        this.Name = Name;
-        this.Description = Description;
-        this.ToolName = ToolName;
-        this.CombinedKits = CombinedKits;
+        this.id = Id;
+        this.typeCard = TypeCard;
+        this.name = Name;
+        this.description = Description;
+        this.toolName = ToolName;
+        this.combinedKits = CombinedKits;
+        this.securityLevel = securityLevel;
     }
-    public Card(int Id, string TypeCard, string Name, string Description, string ToolName)
+    public Card(int Id, string TypeCard, string Name, string Description, string ToolName, string securityLevel)
     {
-        this.Id = Id;
-        this.TypeCard = TypeCard;
-        this.Name = Name;
-        this.Description = Description;
+        this.id = Id;
+        this.typeCard = TypeCard;
+        this.name = Name;
+        this.description = Description;
+        this.securityLevel = securityLevel;
     }
 
 

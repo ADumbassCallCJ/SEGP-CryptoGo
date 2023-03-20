@@ -77,15 +77,15 @@ public class PlayUnplayCard : MonoBehaviourPunCallbacks
         if(playerDeck.GetCurrentPlayerTurn() == PhotonNetwork.LocalPlayer){
             Debug.Log( PhotonNetwork.LocalPlayer + " play card");
     ///      playZone.SetActive(true);
-            cardSelected.transform.localScale = new Vector3(0.8f,0.8f,1);
             cardSelected.transform.SetParent(playZone.transform);
+            cardSelected.transform.localScale = new Vector3(0.8f,0.8f,1);
             Card card = cardSelected.GetComponent<ThisCard>().Card;
             Debug.Log(card.Name);
             pickCard.SetActive(false);
             cardSelected = null;
-            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_PlayCards", RpcTarget.AllBuffered, playerDeck.GetCurrentPlayerTurn(), card.Id);
-         //   playerDeck.PlayCards(PhotonNetwork.LocalPlayer, card);
-            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_NextTurn", RpcTarget.All);
+       //      GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_PlayCards", RpcTarget.All, playerDeck.GetCurrentPlayerTurn(), card.Id);
+    
+            GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_NextTurn", RpcTarget.All, card.Id);
 
         }
 

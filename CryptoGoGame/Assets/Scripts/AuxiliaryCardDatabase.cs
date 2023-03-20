@@ -17,10 +17,13 @@ public class AuxiliaryCardDatabase : MonoBehaviour
 
     public void AddCards(){
         Debug.Log("auxiliaryCardDatabase.AddCards() called");
-        staticAuxiliaryCardList.Add("AuxCards/AE_OM");
-        staticAuxiliaryCardList.Add("AuxCards/H_H");
-        staticAuxiliaryCardList.Add("AuxCards/MAC_BC");
-        staticAuxiliaryCardList.Add("AuxCards/SC_SC");
+        for(int i = 0; i < 4;i++){
+            staticAuxiliaryCardList.Add("AuxCards/AE_OM");
+            staticAuxiliaryCardList.Add("AuxCards/H_H");
+            staticAuxiliaryCardList.Add("AuxCards/MAC_BC");
+            staticAuxiliaryCardList.Add("AuxCards/SC_SC");
+
+        }
    
     }
 
