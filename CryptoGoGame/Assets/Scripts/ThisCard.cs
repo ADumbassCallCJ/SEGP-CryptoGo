@@ -62,6 +62,7 @@ public class ThisCard : MonoBehaviour
                 CardBack = false;
             }
         }
+    //    this.thisId = 0;
 
      //   Debug.Log(NumberOfCardsInDeck);
     }
@@ -84,10 +85,10 @@ public class ThisCard : MonoBehaviour
  //       Debug.Log("this.transform.parent: " + this.transform.parent);
  //       Debug.Log("Hand.transform: " + Hand.transform);
         if(this.transform.parent == Hand.transform){
- //           Debug.Log("Hand Clone called");
-            CardBack = false;
-        }
-        
+//  //           Debug.Log("Hand Clone called");
+             CardBack = false;
+         }
+      //  CardBack = false;
 
         // if(this.transform.parent == GameObject.Find("EnemyPlayZone (1)").transform || 
         // this.transform.parent == GameObject.Find("EnemyPlayZone (2)").transform ||

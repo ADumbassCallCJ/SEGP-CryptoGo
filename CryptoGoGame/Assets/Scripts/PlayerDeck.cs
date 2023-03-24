@@ -13,6 +13,11 @@ using Photon.Realtime;
 
 public class PlayerDeck : MonoBehaviourPunCallbacks
 {
+    [SerializeField]
+    private GameObject Forming;
+    [SerializeField]
+    private GameObject PlayedCards;
+    private PlayedCards playedCards;
     /*deck is Deck of cards*/
     public List<Card> deck = new List<Card>();
     public List<Card> container = new List<Card>();
@@ -36,6 +41,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     private GameObject auxiliaryCardPrefab;
     public GameObject Enemy;
     private GameObject playCardButton;
+    private GameObject forming;
     public GameObject PlayCardButton{
         get{return playCardButton;}
     }
@@ -60,12 +66,15 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     public void Start()
     {
+        playedCards = PlayedCards.GetComponent<PlayedCards>();
         Debug.Log("PlayerDeck.Start() called");
         auxiliaryCardDatabase = this.transform.gameObject.GetComponent<AuxiliaryCardDatabase>();
         pickCard = GameObject.Find("PickCard");
         pickCardZone = GameObject.Find("PickCardZone");
         playCardButton = GameObject.Find("PlayCardButton");
         pickCard.SetActive(false);
+        Forming.SetActive(false);
+
 
         playerListingsMenu = GameObject.Find("PlayerListings").GetComponent<PlayerListingsMenu>();
         // playZone = GameObject.Find("PlayZone");
@@ -171,7 +180,9 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                     turn = -1;
                     
                     Debug.Log("Finish the game");
-                    this.photonView.RPC("ResetDeck", RpcTarget.AllViaServer);
+                    this.photonView.RPC("FormKitPhase", RpcTarget.All);
+
+              //      this.photonView.RPC("ResetDeck", RpcTarget.AllViaServer);
                 }
                 if(round == 5){
                     
@@ -224,6 +235,27 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         }    
         return null;
         
+    }
+    [PunRPC]
+    private void FormKitPhase(){
+        Forming.SetActive(true);
+         int indexPlayer = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(PhotonNetwork.LocalPlayer);
+         List<Card> mainPlayerCardsPlay = playerListingsMenu.PlayerCardsPlay.Values.ElementAt(indexPlayer);
+        foreach(Card card in mainPlayerCardsPlay){
+            GameManager.Instance.playerCardsPlay.Add(card);
+        }
+        playedCards.OpenFormKit();
+     //   GameManager.Instance.playerCardsPlay = mainPlayerCardsPlay;
+     //   playedCards.PlayerCards = mainPlayerCardsPlay;
+      
+    }
+
+    public List<Card> GetLocalPlayerPlayedCard(){
+        int indexPlayer = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(PhotonNetwork.LocalPlayer);
+        List<Card> mainPlayerCardsPlay = playerListingsMenu.PlayerCardsPlay.Values.ElementAt(indexPlayer);
+
+        return mainPlayerCardsPlay;
+
     }
 
     [PunRPC]
@@ -361,14 +393,19 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     }
   
     public void updateCardObjects(Player player){
-        Debug.Log("update card objects called");
-        Hand = GameObject.Find("Hand");
+        int childCount = Hand.transform.childCount;
+         Hand = GameObject.Find("Hand");
         int indexPlayer = playerListingsMenu.PlayerDecks.Keys.ToList().IndexOf(player);
         List<Card> mainPlayerCardsList = playerListingsMenu.PlayerDecks.Values.ElementAt(indexPlayer);
-        for(int i = 0; i < Hand.transform.childCount; i++){
-            GameObject cardObjects = Hand.transform.GetChild(i).gameObject;
-            ThisCard thisCard = cardObjects.GetComponent<ThisCard>();
-            thisCard.thisId = mainPlayerCardsList[i].Id;
+        if(childCount == mainPlayerCardsList.Count){
+            Debug.Log("update card objects called");
+
+            for(int i = 0; i < childCount; i++){
+                GameObject cardObjects = Hand.transform.GetChild(i).gameObject;
+                ThisCard thisCard = cardObjects.GetComponent<ThisCard>();
+                Debug.Log(cardObjects);
+                thisCard.thisId = mainPlayerCardsList[i].Id;
+            }
         }
     }
 
@@ -527,7 +564,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         }
         // Give Main Player Card
         foreach(Card card in mainPlayerCards){
-            yield return new WaitForSeconds(1);
+          //  yield return new WaitForSeconds(1);
             Hand = GameObject.Find("Hand");
             GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation,Hand.transform);
             ThisCard thisCard = _CardToHand.GetComponent<ThisCard>();
@@ -554,7 +591,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         Enemy = GameObject.Find(enemyPanelName);
         Debug.Log(Enemy.gameObject.name);
         for(int i = 0; i < numberOfDrawCard; i++){
-            yield return new WaitForSeconds(1);
+          //  yield return new WaitForSeconds(0.5);
             Enemy = GameObject.Find(enemyPanelName);
             
             GameObject _cardBack = Instantiate(CardBack, transform.position, transform.rotation, Enemy.transform);

@@ -45,6 +45,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private PlayerDeck playerDeck;
 
+
+
     private bool _ready = false;
     private List<PlayerListing> _listings = new List<PlayerListing>(); 
     public List<PlayerListing> PlayerListings{get {return _listings;}}
