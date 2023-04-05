@@ -12,6 +12,11 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
 
     private List<RoomInfo> _roomInfoLists = new List<RoomInfo>(); 
 
+    private int numPlayerMode = 2; // number of player allow in the room, by default is 2. cj added
+
+    [SerializeField]
+    private Dropdown dropDownMenu;
+
     // Test  Player 
     public void OnClick_CreateRoom(){
 
@@ -22,15 +27,19 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
         // Create a new room
         // Join or create room
         RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 4;
+        options.MaxPlayers = System.Convert.ToByte(numPlayerMode);
+        Debug.Log("number of player: " + options.MaxPlayers); //testing
         // Check if the room existed or not
-        int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
-        if(index == -1){
-            PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+        if(options.MaxPlayers > 0){
+            int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
+            if(index == -1){
+                PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+            }
+            else{
+                Debug.Log("The room has already existed");
+            }
         }
-        else{
-            Debug.Log("The room has already existed");
-        }
+        
  //       PhotonNetwork.LoadLevel(1);
     }
     public override void OnCreatedRoom()
@@ -58,6 +67,21 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
                 _roomInfoLists.Add(info);
             }
            
+        }
+    }
+
+    public void ChooseMaxPlayerRoom(){
+        if(dropDownMenu.value == 0){
+            numPlayerMode = 2;
+            Debug.Log("choose 2");
+        }
+        if(dropDownMenu.value == 1){
+            numPlayerMode = 3;
+            Debug.Log("choose 3");
+        }
+        if(dropDownMenu.value == 2){
+            numPlayerMode = 4;
+            Debug.Log("choose 4");
         }
     }
 }
