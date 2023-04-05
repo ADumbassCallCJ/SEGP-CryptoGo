@@ -170,6 +170,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 //            _readyUpText.gameObject.SetActive(false);
             _readyButton.gameObject.SetActive(false);
             _startButton.gameObject.SetActive(false);
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
         }
     }
     private void GetCurrentRoomPlayers(){
