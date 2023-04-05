@@ -20,8 +20,8 @@ public class PlayedCards : MonoBehaviourPunCallbacks
 
     [SerializeField]
     private Text PlayerScoreText;
-    [SerializeField]
-    private GameObject PlayerListings;
+    // [SerializeField]
+    // private GameObject PlayerListings; //remove this for a while, cj
     [SerializeField]
     private GameObject Forming;
 
@@ -71,7 +71,7 @@ public class PlayedCards : MonoBehaviourPunCallbacks
     
     void Awake(){
         Debug.Log("PlayedCards Awake() called");
-        playerListingsMenu = PlayerListings.GetComponent<PlayerListingsMenu>();
+        // playerListingsMenu = PlayerListings.GetComponent<PlayerListingsMenu>(); //remove this for a while, cj
         // Debug.Log(playerListingsMenu);
         // int indexPlayer = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(PhotonNetwork.LocalPlayer);
         // List<Card> mainPlayerCardsPlay = playerListingsMenu.PlayerCardsPlay.Values.ElementAt(indexPlayer);

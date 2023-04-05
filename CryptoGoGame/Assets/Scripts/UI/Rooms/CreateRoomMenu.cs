@@ -10,27 +10,32 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private Text _roomName;
 
+
     private List<RoomInfo> _roomInfoLists = new List<RoomInfo>(); 
+
+    public int temp = -1;
 
     // Test  Player 
     public void OnClick_CreateRoom(){
-
         if(!PhotonNetwork.IsConnected){
-            return;
+        return;
         }
-
         // Create a new room
         // Join or create room
-        RoomOptions options = new RoomOptions();
-        options.MaxPlayers = 4;
+        RoomOptions options = new RoomOptions();    
+        options.MaxPlayers = System.Convert.ToByte(temp);
+        Debug.Log("number of player: " + options.MaxPlayers); //testing
         // Check if the room existed or not
-        int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
-        if(index == -1){
-            PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+        if(options.MaxPlayers > 0){
+            int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
+            if(index == -1){
+                PhotonNetwork.JoinOrCreateRoom(_roomName.text, options, TypedLobby.Default);
+            }
+            else{
+                Debug.Log("The room has already existed");
+            } 
         }
-        else{
-            Debug.Log("The room has already existed");
-        }
+            
  //       PhotonNetwork.LoadLevel(1);
     }
     public override void OnCreatedRoom()
@@ -58,6 +63,26 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
                 _roomInfoLists.Add(info);
             }
            
+        }
+    }
+
+    public void ChooseMaxPlayerRoom(int val)  //added this cj
+    {
+        if (val == 0){
+            temp = 1;
+            Debug.Log("Choose 1");
+        }
+        if (val == 1){
+            temp = 2;
+            Debug.Log("Choose 2");
+        }
+        if (val == 2){
+           temp = 3;
+           Debug.Log("Choose 3");
+        }
+        if (val == 3){
+            temp = 4;
+            Debug.Log("Choose 4");
         }
     }
 }

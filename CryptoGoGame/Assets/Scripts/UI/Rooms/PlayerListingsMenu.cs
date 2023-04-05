@@ -45,8 +45,6 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     [SerializeField]
     private PlayerDeck playerDeck;
 
-
-
     private bool _ready = false;
     private List<PlayerListing> _listings = new List<PlayerListing>(); 
     public List<PlayerListing> PlayerListings{get {return _listings;}}
@@ -148,6 +146,12 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 //            _readyUpText.gameObject.SetActive(false);
             _readyButton.gameObject.SetActive(false);
             _startButton.gameObject.SetActive(false);
+            // gameStart = true; //added this cj
+            // ExitGames.Client.Photon.Hashtable setGameStartValue = new ExitGames.Client.Photon.Hashtable(); //added this
+            // setGameStartValue.Add("val", gameStart);
+            // PhotonNetwork.CurrentRoom.SetCustomProperties(setGameStartValue);
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
         }
     }
     private void GetCurrentRoomPlayers(){

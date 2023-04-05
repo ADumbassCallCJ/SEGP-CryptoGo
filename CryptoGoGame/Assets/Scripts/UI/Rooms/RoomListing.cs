@@ -12,11 +12,16 @@ public class RoomListing : MonoBehaviour
     [SerializeField]
     private Text _text;
 
+    [SerializeField]
+    private Text _currentPlayerNumber;
     public RoomInfo RoomInfo { get; private set; }
+
+    
 
     public void SetRoomInfo(RoomInfo roomInfo){
         RoomInfo = roomInfo;
         _text.text = roomInfo.Name + "\tMax players: " + roomInfo.MaxPlayers;
+        _currentPlayerNumber.text = "Number of players: "  + "/" + roomInfo.MaxPlayers;
 
     }
 
