@@ -10,8 +10,13 @@ using Photon.Realtime;
 
 public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 {
+    [SerializeField]
+    private GameObject Background;
+
    [SerializeField]
     private PlayerListing _playerListing;
+    [SerializeField]
+    private Text _roomName;
 
     [SerializeField]
     private MainPlayer _player;
@@ -47,6 +52,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
 
 
+
+    private CardDatabase CardDatabase;
     private bool _ready = false;
     private List<PlayerListing> _listings = new List<PlayerListing>(); 
     public List<PlayerListing> PlayerListings{get {return _listings;}}
@@ -55,21 +62,14 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private Dictionary<int, MainPlayer> _enemyPlayerObjectList = new Dictionary<int, MainPlayer>();
 
 
-    private  Dictionary<Player, List<Card>> playerDecks = new Dictionary<Player, List<Card>>();
+    private  Dictionary<Player, List<Card>> playerDecks;
     public Dictionary<Player,List<Card>> PlayerDecks{
         get {return playerDecks;}
         set{
             playerDecks = value;
         }
     }
-     private  Dictionary<Player, List<Card>> tempPlayerDecks = new Dictionary<Player, List<Card>>();
-    public Dictionary<Player,List<Card>> TempPlayerDecks{
-        get {return tempPlayerDecks;}
-        set{
-            tempPlayerDecks = value;
-        }
-    }
-    public Dictionary<Player, List<Card>> playerCardsPlay = new Dictionary<Player, List<Card>>();
+    public Dictionary<Player, List<Card>> playerCardsPlay;
         public Dictionary<Player,List<Card>> PlayerCardsPlay{
         get {return playerCardsPlay;}
         set{
@@ -79,16 +79,38 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
  //   private ExitGames.Client.Photon.Hashtable m_playerCustomProperties = ExitGames.Client.Photon.Hashtable();
     private int cardNumber;
-
+    private void Start(){
+        PhotonNetwork.EnableCloseConnection = true;
+    }
     private void Awake(){
-        Debug.Log("Call");
-        playerDeck = GameObject.Find("Background Image").GetComponent<PlayerDeck>();
+        Debug.Log("PlayerListingsMenu() Call");
+        playerDeck = Background.GetComponent<PlayerDeck>();
+        CardDatabase = Background.GetComponent<CardDatabase>();
+
+        playerDecks = new Dictionary<Player, List<Card>>();
+        playerCardsPlay = new Dictionary<Player, List<Card>>();
+        _roomName.text += PhotonNetwork.CurrentRoom.Name;
+
         GetCurrentRoomPlayers();
         ButtonsHide();
       //  AddPlayerObject();
         AddingEnemyPlayerObjectList();
         CreatePlayerObjectOfCurrentRoomPlayers();
+       ExitGames.Client.Photon.Hashtable setPlayerValues = new ExitGames.Client.Photon.Hashtable();
+        
+        setPlayerValues["PlayerCardsPlay"] = null ;
+        setPlayerValues["PlayerCards"] = null;
+        Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setPlayerValues));
+        ExitGames.Client.Photon.Hashtable setRoomValues = new ExitGames.Client.Photon.Hashtable();
+        // setRoomValues["turn"] = 0;
+        // setRoomValues["StartTime"] = 0;
+        setRoomValues["Deck"] = null;
+        Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
+         setRoomValues["StartTime"] = 0;
+         setRoomValues["isShuffle"] = false;
+        Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
        
+        
     }
     private void ButtonsHide(){
         Debug.Log("ButtonsHide() call");
@@ -182,6 +204,8 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         }
         else{
             playerObject = Instantiate(_enemyPlayerObjectList[position], playerPosition.transform);
+            Enemy enemy = playerObject.GetComponent<Enemy>();
+            enemy.SetInfoEnemyPlayer(newPlayer);
         }
         if(playerObject != null){
             playerObject.SetPlayerInfo(newPlayer);
@@ -209,7 +233,9 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             listing.SetPlayerInfo(newPlayer);
             listing.SetReady(false);
             _listings.Add(listing);
-        
+        }
+        if(newPlayer != PhotonNetwork.MasterClient){
+            
         }
     }
 
@@ -258,19 +284,64 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         GameObject Hand = GameObject.Find("Hand");
       //  MasterManager.NetworkInstantiate(_CardTohandPrefab, Hand.transform.position, Quaternion.identity, Hand);
         
-        GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
-        playerDeck.ShuffleCard();
+        GameManager.Instance.DeckSize = CardDatabase.CardList.Count*PhotonNetwork.CurrentRoom.PlayerCount;
+        playerDeck.InstantiateCardsDeck();
+        Background.GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
+  //      playerDeck.ShuffleCard();
      //   GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_ShuffleCard", RpcTarget.All);
         // foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
           //  GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, playerInfo.Value, 6);
        // }
     //    GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, th, 6);
     //    GameObject.Find("Background Image").GetComponent<PhotonView>().RPC("RPC_GiveCardsToPlayer", RpcTarget.All, PhotonNetwork.LocalPlayer,6);
-
-
-        List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
+        if(PhotonNetwork.IsMasterClient){
+            // playerDeck.AddCardsToDeck(PhotonNetwork.CurrentRoom.PlayerCount);
+            playerDeck.ShuffleCard();
+        }
+        // playerDeck.ShuffleCard();
+    //     List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(PhotonNetwork.LocalPlayer, 6, playerDeck.TotalCardNumber);
          
-        playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+    //     playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+        
+    //     ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
+    //     Debug.Log("playerCardsplay size = " + playerCardsPlay.Count);
+    //     if(playerCardsPlay.Count > 0){
+    //         playerCardsPlay = new Dictionary<Player, List<Card>>();
+    //         int[] myPlayCards = new int[0];
+    //         setCardsValue["PlayerCardsPlay"] = myPlayCards;
+    //         Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
+            
+    //     }
+    //     playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
+         
+
+    //      Debug.Log("playerDecks size = " + playerDecks.Count);
+    //      int[] myCards = new int[currentPlayerCards.Count];
+    //      int i = 0;
+    //      foreach(Card card in currentPlayerCards){
+    //         myCards[i++] = card.Id;
+            
+    //      }
+         
+    // //     Debug.Log(myCards.Length);
+    // //     // playerDecks.Add(PhotonNetwork.LocalPlayer, currentPlayerCards);
+    // //   //  setCardsValue.Add("playerCards",myCards);
+    //      setCardsValue["PlayerCards"] = myCards;
+    //      Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
+
+    //     playerDeck.InstantiateCards(6,2 ,PhotonNetwork.LocalPlayer);
+    //    Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("playerCards"));
+        
+    //    Debug.Log("playerDecks size = " + playerDecks.Count);
+    
+
+    
+        // playerDeck.StartGame();
+    }
+    public void GiveCards(Player player,int numberOfCardsGivenToPlayer, int cardNumber ){
+        List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(player, numberOfCardsGivenToPlayer, cardNumber); 
+         
+        playerDecks.Add(player, currentPlayerCards);
         
         ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
         Debug.Log("playerCardsplay size = " + playerCardsPlay.Count);
@@ -281,7 +352,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
             
         }
-        playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
+        playerCardsPlay.Add(player, new List<Card>());
          
 
          Debug.Log("playerDecks size = " + playerDecks.Count);
@@ -298,16 +369,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
          setCardsValue["PlayerCards"] = myCards;
          Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
 
-        
-        
         playerDeck.InstantiateCards(6,2 ,PhotonNetwork.LocalPlayer);
-       // Debug.Log(PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("playerCards"));
-        
-       // Debug.Log("playerDecks size = " + playerDecks.Count);
-    
-
-    
-        // playerDeck.StartGame();
     }
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {
@@ -324,13 +386,12 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             Debug.Log(targetPlayer.NickName + " , The length of the array is: " + cardIdArray.Length);
             List<Card> playerCards = new List<Card>();
             for(int i = 0; i < cardIdArray.Length; i++){
-                playerCards.Add(CardDatabase.StaticCardList[cardIdArray[i]]);
+                playerCards.Add(CardDatabase.CardList[cardIdArray[i]]);
                
             }
             bool existedPlayer = playerDecks.ContainsKey(targetPlayer);
             if(!existedPlayer){
                 playerDecks.Add(targetPlayer, playerCards);
-                tempPlayerDecks.Add(targetPlayer,playerCards);
                 playerCardsPlay.Add(targetPlayer, new List<Card>());
 
             }
@@ -358,7 +419,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             Debug.Log("The length of the array cards played is: " + playCardIdArray.Length);
             List<Card> playerCardsPlayList = new List<Card>();
             for(int i = 0; i < playCardIdArray.Length; i++){
-                playerCardsPlayList.Add(CardDatabase.StaticCardList[playCardIdArray[i]]);
+                playerCardsPlayList.Add(CardDatabase.CardList[playCardIdArray[i]]);
                
             }
             bool existedPlayer = PlayerCardsPlay.ContainsKey(targetPlayer);

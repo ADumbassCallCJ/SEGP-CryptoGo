@@ -414,6 +414,7 @@
 "Assets/Scripts/ChooseCardsGenerate.cs"
 "Assets/Scripts/DragDrop.cs"
 "Assets/Scripts/Enemy.cs"
+"Assets/Scripts/Forming Crypto Kits/EndKitPhase.cs"
 "Assets/Scripts/Forming Crypto Kits/FormingCryptoKits.cs"
 "Assets/Scripts/Forming Crypto Kits/PlayedCards.cs"
 "Assets/Scripts/HoverButton.cs"

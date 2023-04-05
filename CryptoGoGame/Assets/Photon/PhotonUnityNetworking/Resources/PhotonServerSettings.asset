@@ -59,6 +59,8 @@ MonoBehaviour:
   - InstantiatePlayCardsToEnemies
   - DestroyOneEnemyCard
   - FormKitPhase
+  - DisplayPlayersScore
+  - EndKitPhaseStatus
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

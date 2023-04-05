@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
- using UnityEngine.Events;
+using UnityEngine.Events;
+ 
+ 
+using Photon.Pun;
+using Photon.Realtime;
 
-public class FormingCryptoKits : MonoBehaviour
+public class FormingCryptoKits : MonoBehaviourPunCallbacks
 {
-
+    [SerializeField]
+    private GameObject Background;
     [SerializeField]
     private GameObject CryptoKitPhase;
 
@@ -34,20 +39,27 @@ public class FormingCryptoKits : MonoBehaviour
     [SerializeField]
     private GameObject FormKitNotification;
     [SerializeField]
+    private GameObject EndPhaseNotification;
+    [SerializeField]
     private GameObject FormKitButton;
     [SerializeField]
     private GameObject EndKitPhaseButton;
     [SerializeField]
+
     private GameObject EndKitPhase;
+    [SerializeField]
+    private Text PlayerScoreText;
     private PlayedCards playedCards;
 
+    private EndKitPhase endKitPhase;
     private GameObject warning1;
     private GameObject warning2;
     private GameObject warning3;
 
-    private CardDatabase cardDatabase;
+    private CardDatabase CardDatabase;
 
     private List<Card> playerCards;
+    private CardDatabase cardDatabase;
     public List<Card> PlayerCards{
         get{return playerCards;}
         set{
@@ -63,7 +75,7 @@ public class FormingCryptoKits : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+        endKitPhase = EndKitPhase.GetComponent<EndKitPhase>(); 
         warning1 = Kit1.transform.Find("Warning").gameObject;
         warning1.SetActive(false);
         warning2 = Kit2_1.transform.Find("Warning").gameObject;
@@ -77,11 +89,12 @@ public class FormingCryptoKits : MonoBehaviour
         FormKitNotification.SetActive(false);
         EndKitPhaseButton.SetActive(false);
         EndKitPhase.SetActive(false);
+        cardDatabase = Background.GetComponent<CardDatabase>();
 
         kitsForm = new Dictionary<int, List<Card>>();
    //     ChooseCardPanel.SetActive(false);
 
-        cardDatabase = GameObject.Find("Background Image").GetComponent<CardDatabase>();
+        CardDatabase = GameObject.Find("Background Image").GetComponent<CardDatabase>();
     }
     void Awake(){
 
@@ -103,7 +116,7 @@ public class FormingCryptoKits : MonoBehaviour
 
         GameObject cardsObject = GameObject.Find("ChooseCardPanel(Clone)/Cards");
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "BC"){
                 cardList.Add(card);
@@ -125,13 +138,13 @@ public class FormingCryptoKits : MonoBehaviour
     public void RemoveCardsInPlayedCards(List<Card> kitForm){
         foreach(Card card in kitForm){
             int index = playerCards.FindIndex(x => x == card);
-            Debug.Log(index);
+     //       Debug.Log(index);
             if(index != -1){
                 playerCards.RemoveAt(index);
             }
         }
         GameManager.Instance.playerCardsPlay = playerCards;
-        Debug.Log("Remove cards size now = " + GameManager.Instance.playerCardsPlay.Count);
+//        Debug.Log("Remove cards size now = " + GameManager.Instance.playerCardsPlay.Count);
         DestroyCards();
         InstantiateCards();
     }
@@ -159,7 +172,7 @@ public class FormingCryptoKits : MonoBehaviour
 
         GameObject cardsObject = GameObject.Find("ChooseCardPanel(Clone)/Cards");
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "BC"){
                 cardList.Add(card);
@@ -184,7 +197,7 @@ public class FormingCryptoKits : MonoBehaviour
 
         GameObject cardsObject = GameObject.Find("ChooseCardPanel(Clone)/Cards");
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "AE"){
                 cardList.Add(card);
@@ -206,7 +219,7 @@ public class FormingCryptoKits : MonoBehaviour
 
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "SC"){
                 cardList.Add(card);
@@ -230,7 +243,7 @@ public class FormingCryptoKits : MonoBehaviour
 
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "MAC"){
                 cardList.Add(card);
@@ -253,7 +266,7 @@ public class FormingCryptoKits : MonoBehaviour
 
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "MAC"){
                 cardList.Add(card);
@@ -276,7 +289,7 @@ public class FormingCryptoKits : MonoBehaviour
 
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "OM"){
                 cardList.Add(card);
@@ -300,7 +313,7 @@ public class FormingCryptoKits : MonoBehaviour
 
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "H" || card.TypeCard == "BC"){
                 cardList.Add(card);
@@ -323,7 +336,7 @@ public class FormingCryptoKits : MonoBehaviour
    
        
         List<Card> cardList = new List<Card>();
-        Debug.Log(CardDatabase.StaticCardList.Count);
+        Debug.Log(CardDatabase.CardList.Count);
         foreach(Card card in GameManager.Instance.playerCardsPlay){
             if(card.TypeCard == "H" || card.TypeCard == "BC"){
                 cardList.Add(card);
@@ -335,13 +348,32 @@ public class FormingCryptoKits : MonoBehaviour
 
     }
     private void InstantiateCards(List<Card> cardList, GameObject panel){
-         GameObject cardsObject = GameObject.Find("ChooseCardPanel(Clone)/Cards");
+        GameObject cardsObject = GameObject.Find("ChooseCardPanel(Clone)/Cards");
+        GameObject parent = panel.transform.parent.gameObject;
+        Card existedBCCard = null;
+        if(parent.name == "Kit2_2"){
+            GameObject BC_CardObject = parent.transform.Find("BC").gameObject;
+            if(BC_CardObject){
+                if(BC_CardObject.transform.childCount > 0){
+                    Debug.Log("there is one BC card picked");
+                    GameObject BC_CardExisted = BC_CardObject.transform.GetChild(0).gameObject;
+                    ThisCard thisBCCard = BC_CardExisted.GetComponent<ThisCard>();
+                    existedBCCard = cardDatabase.CardList[thisBCCard.thisId];
+                }
+            }
+        }
         foreach(Card card in cardList){
-            GameObject _Card = Instantiate(Card, transform.position, transform.rotation,cardsObject.transform);
-            ThisCard thisCard = _Card.GetComponent<ThisCard>();
-            thisCard.thisId = card.Id;
-            Button cardClick = _Card.GetComponent<Button>();
-            cardClick.onClick.AddListener(delegate {PickCard(card, panel); });
+            if(parent.name == "Kit2_2" && existedBCCard != null && card == existedBCCard){
+                Debug.Log("there is one BC card picked");
+            }
+            else{
+                GameObject _Card = Instantiate(Card, transform.position, transform.rotation,cardsObject.transform);
+                ThisCard thisCard = _Card.GetComponent<ThisCard>();
+                thisCard.thisId = card.Id;
+                Button cardClick = _Card.GetComponent<Button>();
+                cardClick.onClick.AddListener(delegate {PickCard(card, panel); });
+
+            }
         }
     }
     public void PickCard(Card card, GameObject panel){
@@ -395,7 +427,13 @@ public class FormingCryptoKits : MonoBehaviour
         Kit2.SetActive(false);
         Kit2_2.SetActive(true);
     }
-
+    private void CheckEnoughCardsToForm(){
+        if(!playedCards.CheckStillHaveCardsToForm()){
+            FormKitNotification.SetActive(true);
+            FormKitButton.SetActive(false);
+                EndKitPhaseButton.SetActive(true);
+        }
+    }
     public void ContinueKit1(){
         GameObject BC_Object = GameObject.Find("Kit1/BC");
         GameObject AE_Object = GameObject.Find("Kit1/AE");
@@ -404,11 +442,11 @@ public class FormingCryptoKits : MonoBehaviour
         
         if(BC_Object.transform.childCount > 0){
             ThisCard BCCard = BC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[BCCard.thisId]);
+            cards.Add(CardDatabase.CardList[BCCard.thisId]);
         }
         if(AE_Object.transform.childCount > 0){
             ThisCard AECard = AE_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[AECard.thisId]);
+            cards.Add(CardDatabase.CardList[AECard.thisId]);
         }
         if(cards.Count < 2){
             Debug.Log("Not enough to form a kit");
@@ -424,11 +462,7 @@ public class FormingCryptoKits : MonoBehaviour
             Kit1.SetActive(false);
             CryptoKitPhase.SetActive(true);
             PlayedCards.SetActive(true);
-            if(!playedCards.CheckStillHaveCardsToForm()){
-                FormKitNotification.SetActive(true);
-                FormKitButton.SetActive(false);
-                EndKitPhaseButton.SetActive(true);
-            }
+            CheckEnoughCardsToForm();
         }
 
     }
@@ -454,19 +488,19 @@ public class FormingCryptoKits : MonoBehaviour
 
         if(SC_Object.transform.childCount > 0){
             ThisCard SCCard = SC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[SCCard.thisId]);
+            cards.Add(CardDatabase.CardList[SCCard.thisId]);
         }
         if(MAC_Object.transform.childCount > 0){
             ThisCard MACCard = MAC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[MACCard.thisId]);
+            cards.Add(CardDatabase.CardList[MACCard.thisId]);
         }
         if(H_Object.transform.childCount > 0){
             ThisCard HCard = H_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[HCard.thisId]);
+            cards.Add(CardDatabase.CardList[HCard.thisId]);
         }
         if(BC_Object.transform.childCount > 0){
             ThisCard BCCard = BC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[BCCard.thisId]);
+            cards.Add(CardDatabase.CardList[BCCard.thisId]);
         }
         if(cards.Count < 3){
             Debug.Log("Not enough to form a kit");
@@ -482,11 +516,7 @@ public class FormingCryptoKits : MonoBehaviour
             Kit2_1.SetActive(false);
             CryptoKitPhase.SetActive(true);
             PlayedCards.SetActive(true);
-            if(!playedCards.CheckStillHaveCardsToForm()){
-                FormKitNotification.SetActive(true);
-                FormKitButton.SetActive(false);
-                EndKitPhaseButton.SetActive(true);
-            }
+            CheckEnoughCardsToForm();
         }
 
     }
@@ -521,23 +551,23 @@ public class FormingCryptoKits : MonoBehaviour
 
         if(OM_Object.transform.childCount > 0){
             ThisCard OMCard = OM_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[OMCard.thisId]);
+            cards.Add(CardDatabase.CardList[OMCard.thisId]);
         }
         if(BC_Object.transform.childCount > 0){
             ThisCard BCCard = BC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[BCCard.thisId]);
+            cards.Add(CardDatabase.CardList[BCCard.thisId]);
         }
         if(MAC_Object.transform.childCount > 0){
             ThisCard MACCard = MAC_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[MACCard.thisId]);
+            cards.Add(CardDatabase.CardList[MACCard.thisId]);
         }
         if(BC1_Object.transform.childCount > 0){
             ThisCard BC1Card = BC1_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[BC1Card.thisId]);
+            cards.Add(CardDatabase.CardList[BC1Card.thisId]);
         }
         if(H_Object.transform.childCount > 0){
             ThisCard HCard = H_Object.transform.GetChild(0).gameObject.GetComponent<ThisCard>();
-            cards.Add(CardDatabase.StaticCardList[HCard.thisId]);
+            cards.Add(CardDatabase.CardList[HCard.thisId]);
         }
         if(cards.Count < 4){
             Debug.Log("Not enough to form a kit");
@@ -553,11 +583,7 @@ public class FormingCryptoKits : MonoBehaviour
             Kit2_2.SetActive(false);
             CryptoKitPhase.SetActive(true);
             PlayedCards.SetActive(true);
-            if(!playedCards.CheckStillHaveCardsToForm()){
-                FormKitNotification.SetActive(true);
-                FormKitButton.SetActive(false);
-                EndKitPhaseButton.SetActive(true);
-            }
+            CheckEnoughCardsToForm();
         }
 
     }
@@ -586,7 +612,12 @@ public class FormingCryptoKits : MonoBehaviour
     }
 
     public void EndKitPhaseClicked(){
+        
+        ExitGames.Client.Photon.Hashtable setTotalPlayerScoreValue = new ExitGames.Client.Photon.Hashtable();
+        setTotalPlayerScoreValue["TotalScore"] = GameManager.Instance.playerTotalScore;
+        Debug.Log("Updated total score of main player: " + PhotonNetwork.LocalPlayer.SetCustomProperties(setTotalPlayerScoreValue));
         EndKitPhase.SetActive(true);
+
     }
 
     public void BackKit2(){
@@ -601,5 +632,24 @@ public class FormingCryptoKits : MonoBehaviour
         Kit2.SetActive(false);
     }
 
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+    {
+       object scoreObject;
+       if(targetPlayer.CustomProperties.TryGetValue("TotalScore", out scoreObject)){
+            Debug.Log("Updated total score for " + targetPlayer.NickName);
+            int totalScore = (int) scoreObject;
+            bool isContainPlayer = GameManager.Instance.playersScore.ContainsKey(targetPlayer);
+            Debug.Log("Contains : " + isContainPlayer);
+            if(!isContainPlayer){
+                GameManager.Instance.playersScore.Add(targetPlayer, totalScore);
+            }
+            if(targetPlayer == PhotonNetwork.LocalPlayer){
+                endKitPhase.EndKitPhaseStatus();
+            }
+            if(GameManager.Instance.playersScore.Count == PhotonNetwork.CurrentRoom.PlayerCount){
+                EndKitPhase.GetComponent<PhotonView>().RPC("EndKitPhaseStatus", RpcTarget.All);
+            }
+       }
+    }
 
 }

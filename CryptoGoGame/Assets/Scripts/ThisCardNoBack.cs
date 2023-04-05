@@ -25,7 +25,10 @@ public class ThisCardNoBack : MonoBehaviour
     public string CardToolName;
     public List<string> CardCombinedKits = new List<string>();
 
-
+    private GameObject Background;
+    private CardDatabase CardDatabase;
+    
+    
     
     
     public Text CardTypeText;
@@ -52,9 +55,10 @@ public class ThisCardNoBack : MonoBehaviour
         thisTF = GetComponent<Transform>();
         cards.Add(new Card());
  //       cards[0] = CardDatabase.StaticCardList[thisId];
-        NumberOfCardsInDeck = PlayerDeck.DeckSize;
+//        NumberOfCardsInDeck = PlayerDeck.DeckSize;
         cardInitialPosition = transform.position;
-
+        Background = GameObject.Find("Background Image");
+        CardDatabase = Background.GetComponent<CardDatabase>();
 
 
     }
@@ -65,7 +69,7 @@ public class ThisCardNoBack : MonoBehaviour
         //assign data to cards
 
 
-        cards[0] = CardDatabase.StaticCardList[this.thisId];
+        cards[0] = CardDatabase.CardList[this.thisId];
         card = cards[0];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;

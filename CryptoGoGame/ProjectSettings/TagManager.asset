@@ -8,6 +8,8 @@ TagManager:
   - Card
   - EnemyPlayZone
   - AuxiliaryCard
+  - PlayerName
+  - KickButton
   layers:
   - Default
   - TransparentFX

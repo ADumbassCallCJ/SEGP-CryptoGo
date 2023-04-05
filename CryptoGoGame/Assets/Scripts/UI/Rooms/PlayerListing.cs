@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Photon.Realtime;
+using Photon.Pun;
+using Photon.Realtime;
 
-
-public class PlayerListing : MonoBehaviour
+public class PlayerListing : MonoBehaviourPunCallbacks
 {
     [SerializeField]
     private Text _text;
@@ -14,14 +15,28 @@ public class PlayerListing : MonoBehaviour
     [SerializeField]
     private Image _readyIcon;
 
+    [SerializeField]
+    private Image _hostIcon;
+
     private bool ready = false;
 
     public Player Player { get; private set; }
     public bool Ready {get{return ready;}}
+    
 
     public void SetPlayerInfo(Player player){
         Player = player;
         _text.text = Player.NickName;
+        if(player == PhotonNetwork.MasterClient){
+            _readyIcon.gameObject.SetActive(false);
+            _hostIcon.gameObject.SetActive(true);
+        }
+        else{
+            _hostIcon.gameObject.SetActive(false);
+            _readyIcon.gameObject.SetActive(false);
+        }
+
+    
     }
     public void SetReady(bool readyState){
         ready = readyState;

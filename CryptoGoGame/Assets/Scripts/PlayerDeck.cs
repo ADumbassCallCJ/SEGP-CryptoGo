@@ -1,4 +1,4 @@
- using System.Reflection;
+using System.Reflection;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,12 +17,19 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     private GameObject Forming;
     [SerializeField]
     private GameObject PlayedCards;
+    [SerializeField]
+    private GameObject DeckCards; 
+    [SerializeField]
+    private Text TotalCardsText;
+
+
     private PlayedCards playedCards;
     /*deck is Deck of cards*/
     public List<Card> deck = new List<Card>();
     public List<Card> container = new List<Card>();
     public int NumberOfPlayers;
-    public static int DeckSize;
+    public int DeckSize;
+    private CardDatabase CardDatabase;
     private AuxiliaryCardDatabase auxiliaryCardDatabase;
 
     /*StaticNumberOfDrawCard is the number of cards that each player will receive*/
@@ -62,10 +69,13 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     private int turn;
     private int round;
 
+    private int DeckCount;
+
 
     // Start is called before the first frame update
     public void Start()
     {
+
         playedCards = PlayedCards.GetComponent<PlayedCards>();
         Debug.Log("PlayerDeck.Start() called");
         auxiliaryCardDatabase = this.transform.gameObject.GetComponent<AuxiliaryCardDatabase>();
@@ -74,13 +84,13 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         playCardButton = GameObject.Find("PlayCardButton");
         pickCard.SetActive(false);
         Forming.SetActive(false);
-
-
+        DeckSize = 0;
+        CardDatabase = this.GetComponent<CardDatabase>();
         playerListingsMenu = GameObject.Find("PlayerListings").GetComponent<PlayerListingsMenu>();
         // playZone = GameObject.Find("PlayZone");
         // pickCard.SetActive(false);
     //     NumberOfPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
-    //     DeckSize = CardDatabase.StaticCardList.Count*NumberOfPlayers;
+    //     DeckSize = CardDatabase.CardList.Count*NumberOfPlayers;
     //     enemyPanelNameListSize = PhotonNetwork.PlayerListOthers.Length;
 
     //  //   AddCardsToDeck(NumberOfPlayers);
@@ -101,20 +111,29 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         Debug.Log("ResetDeck()");
         deck = new List<Card>();
         playerListingsMenu.PlayerDecks = new Dictionary<Player, List<Card>>();
-        playerListingsMenu.TempPlayerDecks = new Dictionary<Player, List<Card>>();
-        playerListingsMenu.PlayerCardsPlay = new Dictionary<Player, List<Card>>();
-        ExitGames.Client.Photon.Hashtable setCardsValue = new ExitGames.Client.Photon.Hashtable();
-        int[] myPlayCards = new int[0];
-        setCardsValue["PlayerCardsPlay"] = myPlayCards ;
-        Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
-        isShuffle = false;
-        isCardAdd = false;
-        totalCardNumber = 0;
-        round = 1;
-        turn = 0;
 
-        PhotonNetwork.LeaveRoom();
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        playerListingsMenu.PlayerCardsPlay = new Dictionary<Player, List<Card>>();
+        ExitGames.Client.Photon.Hashtable setPlayerValues = new ExitGames.Client.Photon.Hashtable();
+        
+        setPlayerValues["PlayerCardsPlay"] = null ;
+        setPlayerValues["PlayerCards"] = null;
+        Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setPlayerValues));
+        ExitGames.Client.Photon.Hashtable setRoomValues = new ExitGames.Client.Photon.Hashtable();
+        // setRoomValues["turn"] = 0;
+        // setRoomValues["StartTime"] = 0;
+        setRoomValues["Deck"] = null;
+        Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
+         setRoomValues["StartTime"] = 0;
+         setRoomValues["isShuffle"] = false;
+        Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
+        // isShuffle = false;
+        // isCardAdd = false;
+        // totalCardNumber = 0;
+        // round = 1;
+        // turn = 0;
+
+//        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
     }
 
@@ -128,7 +147,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             Debug.Log("It's " + playerTurn(turn) + " turn");
             if(GetCurrentPlayerTurn() == PhotonNetwork.LocalPlayer){
                 RPC_PlayCards(GetCurrentPlayerTurn(), cardID); 
-                this.photonView.RPC("DestroyOneEnemyCard", RpcTarget.All, GetCurrentPlayerTurn());
+                this.photonView.RPC("DestroyOneEnemyCard", RpcTarget.AllBuffered, GetCurrentPlayerTurn());
                 turn++;
                 ExitGames.Client.Photon.Hashtable setTurnValue = new ExitGames.Client.Photon.Hashtable();
                 setTurnValue.Add("turn", turn);
@@ -175,10 +194,12 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
   
 
              //   InstantiatePlayCardsToEnemies();
-                this.photonView.RPC("InstantiatePlayCardsToEnemies", RpcTarget.All);
+                this.photonView.RPC("InstantiatePlayCardsToEnemies", RpcTarget.AllBuffered);
                 if(round == 10){
                     turn = -1;
-                    
+                    ExitGames.Client.Photon.Hashtable setTurnValue = new ExitGames.Client.Photon.Hashtable();
+                    setTurnValue.Add("turn", -1);
+                    Debug.Log("Set turn value: " + PhotonNetwork.CurrentRoom.SetCustomProperties(setTurnValue));
                     Debug.Log("Finish the game");
                     this.photonView.RPC("FormKitPhase", RpcTarget.All);
 
@@ -187,6 +208,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                 if(round == 5){
                     
                     int numberOfDrawCard = 4;
+                    turn = 0 ;
                     // enemyPanelNameListSize = PhotonNetwork.PlayerListOthers.Length;
               //      StartCoroutine(CreateCardObjectsToHand(6));
               
@@ -202,6 +224,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                 }
                 else if(round != 5){
                     finishRound();
+                    turn = 1;
                 }
             //      else if(round == 5){
                     
@@ -223,11 +246,11 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                 Debug.Log("Finish round " + round);
                 round++;
          
-
-                turn = 1;
-                ExitGames.Client.Photon.Hashtable setTurnValue = new ExitGames.Client.Photon.Hashtable();
-                setTurnValue.Add("turn", turn);
-                Debug.Log("Set turn value: " + PhotonNetwork.CurrentRoom.SetCustomProperties(setTurnValue));
+                    
+                // turn = 1;
+                ExitGames.Client.Photon.Hashtable setTurnValue1 = new ExitGames.Client.Photon.Hashtable();
+                setTurnValue1.Add("turn", turn);
+                Debug.Log("Set turn value: " + PhotonNetwork.CurrentRoom.SetCustomProperties(setTurnValue1));
 
             }
             
@@ -235,6 +258,20 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         }    
         return null;
         
+    }
+    private void DisplayPlayerTurn(){
+        GameObject[] _playerNames;
+        _playerNames = GameObject.FindGameObjectsWithTag("PlayerName");
+        Debug.Log("Display player names: ");
+        foreach(GameObject playerName in _playerNames){
+            Text playerNameText = playerName.GetComponent<Text>();
+            if( GetCurrentPlayerTurn() != null && GetCurrentPlayerTurn().NickName == playerNameText.text){
+                playerNameText.color = Color.green;
+            }
+            else{
+                playerNameText.color = Color.white;
+            }
+        }
     }
     [PunRPC]
     private void FormKitPhase(){
@@ -261,7 +298,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     [PunRPC]
     private void InstantiateCardsSpecialTurn(int numberOfDrawCard){
         enemyPanelNameListSize = PhotonNetwork.PlayerListOthers.Length;
-        destroyAllCards(Hand);
+   //     destroyAllCards(Hand);
         InstantiateCards(numberOfDrawCard,0,PhotonNetwork.LocalPlayer);
     }
     IEnumerator CreateCardObjectsToHand(int numberOfDrawCard){
@@ -294,7 +331,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         // Add 4 cards to each player
         int indexPlayer = playerListingsMenu.PlayerDecks.Keys.ToList().IndexOf(player);
         List<Card> mainPlayerCardsList = playerListingsMenu.PlayerDecks.Values.ElementAt(indexPlayer);
-        List<Card> addCards = GiveCardsToPlayer(player, numberOfDrawCard, deck.Count);
+        List<Card> addCards = GiveCardsToPlayer(player, numberOfDrawCard);
         foreach(Card card in addCards){
             mainPlayerCardsList.Add(card);
         }
@@ -342,8 +379,8 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             }
             else if(players.Count == 3){
                 
-                    transferCards(players[0], players[2]);
-                    transferCards(players[1], players[2]);
+                transferCards(players[0], players[2]);
+                transferCards(players[1], players[2]);
             }
             /* 4 players */
             else if(players.Count == 4){
@@ -393,8 +430,9 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     }
   
     public void updateCardObjects(Player player){
-        int childCount = Hand.transform.childCount;
+      
          Hand = GameObject.Find("Hand");
+        int childCount = Hand.transform.childCount;
         int indexPlayer = playerListingsMenu.PlayerDecks.Keys.ToList().IndexOf(player);
         List<Card> mainPlayerCardsList = playerListingsMenu.PlayerDecks.Values.ElementAt(indexPlayer);
         if(childCount == mainPlayerCardsList.Count){
@@ -403,7 +441,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             for(int i = 0; i < childCount; i++){
                 GameObject cardObjects = Hand.transform.GetChild(i).gameObject;
                 ThisCard thisCard = cardObjects.GetComponent<ThisCard>();
-                Debug.Log(cardObjects);
+    //            Debug.Log(cardObjects);
                 thisCard.thisId = mainPlayerCardsList[i].Id;
             }
         }
@@ -415,22 +453,55 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         if(propertiesThatChanged.TryGetValue("turn",out turnObject)){
             int t = (int) turnObject;
             turn = t;
+            DisplayPlayerTurn();
         }
         object deckObject;
         if(propertiesThatChanged.TryGetValue("Deck", out deckObject)){
             Debug.Log("Deck updated");
             int[] deckArray = (int[])deckObject;
-            List<Card> deckShuffle = new List<Card>();
-            for(int i =0; i < deckArray.Length; i++){
-                deckShuffle.Add(CardDatabase.StaticCardList[deckArray[i]]);
+            if(deckArray != null){
+                List<Card> deckShuffle = new List<Card>();
+                for(int i =0; i < deckArray.Length; i++){
+                    deckShuffle.Add(CardDatabase.CardList[deckArray[i]]);
+                }
+                deck = deckShuffle;
+                Debug.Log("Deck updated size = " + deck.Count);
+                foreach(Card card in deck){
+                    Debug.Log("id = " + card.Id + " , name = " + card.Name);
+                }
+
             }
-            deck = deckShuffle;
-            Debug.Log("Deck updated size = " + deck.Count);
-            foreach(Card card in deck){
-                Debug.Log("id = " + card.Id + " , name = " + card.Name);
+            else{
+                Debug.Log("reset the deck ");
+                deck = new List<Card>();
+
             }
 
         }
+        object isShuffleObject;
+        if(propertiesThatChanged.TryGetValue("isShuffle", out isShuffleObject)){
+            bool isShuffle = (bool) isShuffleObject; 
+            if(isShuffle){
+                GiveCardsToPlayers(6);
+            }
+        }
+    }
+    private void GiveCardsToPlayers(int numberOfCardsGivenToPlayer){
+        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+            if(playerInfo.  Value == PhotonNetwork.LocalPlayer){
+                playerListingsMenu.GiveCards(PhotonNetwork.LocalPlayer, numberOfCardsGivenToPlayer, GameManager.Instance.DeckSize - 6*(playerInfo.Key-1));
+            }
+        }
+        GameManager.Instance.DeckSize = DeckCount-numberOfCardsGivenToPlayer*PhotonNetwork.CurrentRoom.PlayerCount;
+        int[] myRemainingDeck= new int[deck.Count-numberOfCardsGivenToPlayer*PhotonNetwork.CurrentRoom.PlayerCount];
+        int a = 0;
+        for(int i = 0; i < deck.Count-numberOfCardsGivenToPlayer*PhotonNetwork.CurrentRoom.PlayerCount; i++){
+            myRemainingDeck[a++] = deck.ElementAt(i).Id;
+        }
+        ExitGames.Client.Photon.Hashtable setRemainingDeck = new ExitGames.Client.Photon.Hashtable();
+        setRemainingDeck["Deck"] = myRemainingDeck;
+        Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRemainingDeck));
+
     }
 
    // [PunRPC]
@@ -442,7 +513,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         List<Card> mainPlayerCards = playerListingsMenu.PlayerDecks.Values.ElementAt(indexPlayer);
         foreach(Card card in mainPlayerCards){
             Debug.Log(player + " has: " + card.Name);
-        }
+        }   
  
         int cardIndexInMainPlayerCards = mainPlayerCards.FindIndex(x => x.Id == cardId);
         Debug.Log("Card found at " +cardIndexInMainPlayerCards);
@@ -545,6 +616,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     /*Give the Main player cards*/
     IEnumerator StartGame(int numberOfDrawCard, int numberOfAuxCard ,Player player){
         Debug.Log("PlayerDeck.StartGame() called");
+        // InstantiateCardsDeck();
         int indexMainPlayer = playerListingsMenu.PlayerDecks.Keys.ToList().IndexOf(player);
         List<Card> mainPlayerCards = playerListingsMenu.PlayerDecks.Values.ElementAt(indexMainPlayer);
         Debug.Log("index main player position = " + indexMainPlayer);
@@ -561,16 +633,31 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
                 yield return new WaitForSeconds(1);
 
             }
+            // Give Main Player Card
+            foreach(Card card in mainPlayerCards){
+            yield return new WaitForSeconds(1);
+                Hand = GameObject.Find("Hand");
+                RemoveOneCardDeck();
+                GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation,Hand.transform);
+                ThisCard thisCard = _CardToHand.GetComponent<ThisCard>();
+                thisCard.thisCardId = card.Id;
+                Debug.Log("Instantiate " + card.Name + " to " + PhotonNetwork.LocalPlayer);
+                _CardToHand.tag ="Clone";
+            }
         }
-        // Give Main Player Card
-        foreach(Card card in mainPlayerCards){
-          //  yield return new WaitForSeconds(1);
-            Hand = GameObject.Find("Hand");
-            GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation,Hand.transform);
-            ThisCard thisCard = _CardToHand.GetComponent<ThisCard>();
-            thisCard.thisCardId = card.Id;
-            Debug.Log("Instantiate " + card.Name + " to " + PhotonNetwork.LocalPlayer);
-            _CardToHand.tag ="Clone";
+        else{
+            // Give Main Player Card special turn
+            for(int i= 1; i < mainPlayerCards.Count; i++){
+            yield return new WaitForSeconds(1);
+                Hand = GameObject.Find("Hand");
+                RemoveOneCardDeck();
+                GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation,Hand.transform);
+                ThisCard thisCard = _CardToHand.GetComponent<ThisCard>();
+                thisCard.thisCardId = mainPlayerCards.ElementAt(i).Id;
+                Debug.Log("Instantiate " + mainPlayerCards.ElementAt(i).Name + " to " + PhotonNetwork.LocalPlayer);
+                _CardToHand.tag ="Clone";
+            }
+
         }
 
         if(enemyPanelNameListSize != 0){
@@ -591,9 +678,9 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         Enemy = GameObject.Find(enemyPanelName);
         Debug.Log(Enemy.gameObject.name);
         for(int i = 0; i < numberOfDrawCard; i++){
-          //  yield return new WaitForSeconds(0.5);
+           yield return new WaitForSeconds(1);
             Enemy = GameObject.Find(enemyPanelName);
-            
+            RemoveOneCardDeck();
             GameObject _cardBack = Instantiate(CardBack, transform.position, transform.rotation, Enemy.transform);
             _cardBack.tag ="Clone";
 
@@ -604,6 +691,9 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         }
         else{
             turn = 1;
+            ExitGames.Client.Photon.Hashtable setTurnValue = new ExitGames.Client.Photon.Hashtable();
+            setTurnValue.Add("turn", turn);
+            Debug.Log("Set turn value: " + PhotonNetwork.CurrentRoom.SetCustomProperties(setTurnValue));
         }
 
      }
@@ -626,6 +716,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         GameObject EnemyPlayZone = GameObject.Find(enemyPlayZoneName);
         int indexPlayer = playerListingsMenu.PlayerCardsPlay.Keys.ToList().IndexOf(player);
         List<Card> playerCardsPlay = playerListingsMenu.PlayerCardsPlay.Values.ElementAt(indexPlayer);
+        // RemoveOneCardDeck();
         GameObject _CardToHand = Instantiate(CardToHand, transform.position, transform.rotation, EnemyPlayZone.transform);
         ThisCard thisCard = _CardToHand.GetComponent<ThisCard>();
         thisCard.thisCardId = playerCardsPlay[playerCardsPlay.Count-1].Id;
@@ -648,10 +739,18 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     public void RPC_playerDeckStart(){
         Debug.Log("RPC_Start called");
         NumberOfPlayers = PhotonNetwork.CurrentRoom.PlayerCount;
-        DeckSize = CardDatabase.StaticCardList.Count*NumberOfPlayers;
+        DeckSize = GameManager.Instance.DeckSize;
+        
+        // InstantiateCardsDeck();
+        // if(PhotonNetwork.IsMasterClient){
+        //     Debug.Log("Number of player in the room = " + NumberOfPlayers);
+        //     Debug.Log("CardDatabase static = " + CardDatabase.CardList.Count);
+        //     Debug.Log("Deck size now is " + DeckSize);
+        //     AddCardsToDeck(NumberOfPlayers);
+        //     ShuffleCard();
+        // }
         enemyPanelNameListSize = PhotonNetwork.PlayerListOthers.Length;
         /*2. Add cards to the deck base on the total number of players in the room */
-        AddCardsToDeck(NumberOfPlayers);
         addPlayers();
         enemyPanelNameListSize = _players.Count-1;
         GameObject PlayerListings = GameObject.Find("PlayerListings");
@@ -660,26 +759,45 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         //     playerCardsPlay.Add(PhotonNetwork.LocalPlayer, new List<Card>());
         // }
    //     StartCoroutine(StartGame(6));
-
-            
     }
-    
-    [PunRPC]
+
+    public void InstantiateCardsDeck(){
+        Debug.Log("Instantiate cards deck");
+        DeckCount = GameManager.Instance.DeckSize;
+        TotalCardsText.text = DeckCount.ToString();
+        
+        for(int i = 0; i < GameManager.Instance.DeckSize; i++){
+            GameObject _cardBack = Instantiate(CardBack,DeckCards.transform.position, transform.rotation, DeckCards.transform);
+        }
+    }
+    private void RemoveOneCardDeck(){
+        DeckCount--;
+        string newDeckSize = DeckCount.ToString();
+        TotalCardsText.text = newDeckSize;
+        GameObject cardObject = DeckCards.transform.GetChild(0).gameObject;
+        // if(!cardObject){
+            Destroy(cardObject);
+
+        // }
+    }
+
     /*Add the cards into the card deck base on the number of players (can be modified later)*/
-    private void AddCardsToDeck(int numberOfPlayers){
+    public void AddCardsToDeck(int numberOfPlayers){
         Debug.Log("AddCardsToDeck() called");
-        if(!isCardAdd){
+      //  if(!isCardAdd){
             for(int i = 0; i < numberOfPlayers; i++){
-                foreach(Card card in CardDatabase.StaticCardList){
+                foreach(Card card in CardDatabase.CardList){
                     deck.Add(card);
                     
                 }
             }
             totalCardNumber = deck.Count;
-            isCardAdd = true;
+            DeckSize = GameManager.Instance.DeckSize;
+            Debug.Log("Total card size = " +totalCardNumber);
+      //      isCardAdd = true;
 
 
-        }
+    //    }
     }
 
 
@@ -687,11 +805,13 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     public void ShuffleCard(){
        
             Debug.Log("RPC_ShuffleCard call");
+            AddCardsToDeck(PhotonNetwork.CurrentRoom.PlayerCount);
             int lowerBoundShuffleTimes = Random.Range(3,9);
             int upperBoundShuffleTimes = Random.Range(10,20);
             int shuffleTimes = Random.Range(lowerBoundShuffleTimes,upperBoundShuffleTimes);
+            Debug.Log("ShuffleCard Deck Size = " + DeckSize);
             for(int i = 0; i < shuffleTimes; i++){
-                for(int j  = 0; j < DeckSize; j++){
+                for(int j  = 0; j < GameManager.Instance.DeckSize; j++){
                     Card tempCard = deck[j];
                     int randomPosition = Random.Range(j,DeckSize-1);
                     deck[j] = deck[randomPosition];
@@ -700,7 +820,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             }
             
             // isShuffle = true;
-            Debug.Log("Deck alr shuffled: ");
+//            Debug.Log("Deck alr shuffled: ");
             for(int i = 0 ; i < deck.Count; i++){
                 Debug.Log("i = " + i + " , card name = " + deck[i].Name);
             }
@@ -711,6 +831,7 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             }
             ExitGames.Client.Photon.Hashtable setShuffleDeck = new ExitGames.Client.Photon.Hashtable();
             setShuffleDeck["Deck"] = myShuffleDeck;
+            setShuffleDeck["isShuffle"] = true;
             Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setShuffleDeck));
 
 
@@ -727,33 +848,29 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         }        
         Debug.Log(_players.Count);
     }
-    [PunRPC]
-    private void RPC_GiveCards(int numberOfCardsGiven){
-        Debug.Log("RPC_GiveCards called");
-        this.photonView.RPC("RPC_GiveCardsToPlayer", RpcTarget.AllViaServer,PhotonNetwork.LocalPlayer,numberOfCardsGiven); 
-   //     this.photonView.RPC("RPC_InstantiateCards", RpcTarget.AllViaServer, PhotonNetwork.LocalPlayer);
-    }
-
-
 
     /*Give cards to each player (after shuffling)*/
-    public List<Card> GiveCardsToPlayer(Player player,int numberOfCardsGivenToPlayer, int cardNumber){
+    public List<Card> GiveCardsToPlayer(Player player,int numberOfCardsGivenToPlayer){
         
        // bool existedPlayer = playerListingsMenu.PlayerDecks.ContainsKey(player);
       //  if(!existedPlayer){
             Debug.Log("RPC_GiveCardsToPlayer called");
             List<Card> playerCards = new List<Card>();
             Debug.Log(player.NickName + " : ");
+            // if(cardNumber != deck.Count){
+            //     for(int i = deck.Count-1; i > deck.Count-cardNumber;i--){
+            //         deck.RemoveAt(i);
+            //     }
+            // }
             for(int i = 0; i < numberOfCardsGivenToPlayer; i++){
-                Debug.Log("Card Number = " + (cardNumber-1) + " is added to player " + player);
+                Debug.Log("Card Number = " + (deck.Count-1) + " is added to player " + player);
                 
-                playerCards.Add(deck[cardNumber-1]);
+                playerCards.Add(deck[deck.Count-1]);
                 Debug.Log(player + " added " + playerCards[i].Name);
-                deck.RemoveAt(cardNumber-1);
-                Debug.Log("deck size = " + deck.Count);
-                cardNumber--;
-                
+                deck.RemoveAt(deck.Count-1);
+                  Debug.Log("deck size = " + deck.Count);
             }
+            GameManager.Instance.DeckSize = deck.Count;
             int[] myRemainingDeck= new int[deck.Count];
             int b = 0;
             foreach(Card card in deck){
@@ -762,6 +879,36 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
             ExitGames.Client.Photon.Hashtable setRemainingDeck = new ExitGames.Client.Photon.Hashtable();
             setRemainingDeck["Deck"] = myRemainingDeck;
             Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRemainingDeck));
+
+            return playerCards;
+          //  playerDecks.Add(player, playerCards);
+           // Debug.Log("playerDecks size = " + playerDecks.Count);
+           // playerCardsPlay.Add(player, new List<Card>());
+      //  } 
+      //  return null;
+    }
+    public List<Card> GiveCardsToPlayer(Player player,int numberOfCardsGivenToPlayer, int cardNumber){
+        
+       // bool existedPlayer = playerListingsMenu.PlayerDecks.ContainsKey(player);
+      //  if(!existedPlayer){
+            Debug.Log("RPC_GiveCardsToPlayer called");
+            List<Card> playerCards = new List<Card>();
+            Debug.Log(player.NickName + " : ");
+            // if(cardNumber != deck.Count){
+            //     for(int i = deck.Count-1; i > deck.Count-cardNumber;i--){
+            //         deck.RemoveAt(i);
+            //     }
+            // }
+            for(int i = 0; i < numberOfCardsGivenToPlayer; i++){
+                Debug.Log("Card Number = " + (cardNumber-1) + " is added to player " + player);
+                
+                playerCards.Add(deck[cardNumber-1]);
+                Debug.Log(player + " added " + playerCards[i].Name);
+                // deck.RemoveAt(cardNumber-1);
+                Debug.Log("deck size = " + deck.Count);
+                cardNumber--;
+                
+            }
 
             return playerCards;
           //  playerDecks.Add(player, playerCards);

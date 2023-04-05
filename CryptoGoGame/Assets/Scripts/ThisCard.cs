@@ -25,7 +25,8 @@ public class ThisCard : MonoBehaviour
     public string CardToolName;
     public List<string> CardCombinedKits = new List<string>();
 
-
+    private GameObject Background;
+    private CardDatabase CardDatabase;
     
     
     public Text CardTypeText;
@@ -54,8 +55,10 @@ public class ThisCard : MonoBehaviour
         cards.Add(new Card());
  //       cards[0] = CardDatabase.StaticCardList[thisId];
         CardBack = true;
-        NumberOfCardsInDeck = PlayerDeck.DeckSize;
+    //    NumberOfCardsInDeck = PlayerDeck.DeckSize;
         cardInitialPosition = transform.position;
+        Background = GameObject.Find("Background Image");
+        CardDatabase = Background.GetComponent<CardDatabase>();
         GameObject[] enemyPlayZones = GameObject.FindGameObjectsWithTag("EnemyPlayZone");
         for(int i = 0; i < enemyPlayZones.Length; i++){
             if(this.transform.parent == enemyPlayZones[i].transform){
@@ -98,7 +101,7 @@ public class ThisCard : MonoBehaviour
         //  }
 
 
-        cards[0] = CardDatabase.StaticCardList[this.thisId];
+        cards[0] = CardDatabase.CardList[this.thisId];
         card = cards[0];
         Id = cards[0].Id;
         CardType = cards[0].TypeCard;
@@ -107,7 +110,7 @@ public class ThisCard : MonoBehaviour
         CardToolName = cards[0].ToolName;
         CardCombinedKits = cards[0].CombinedKits;
 
-;
+
 
 
         staticCardBack = CardBack;

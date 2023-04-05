@@ -30,7 +30,7 @@ public class PlayedCards : MonoBehaviourPunCallbacks
 
     private FormingCryptoKits formingCryptoKits;
 
-    private double playerScore;
+    private int playerScore;
     public double PlayerScore{
         get{return playerScore;}
     }
@@ -131,6 +131,7 @@ public class PlayedCards : MonoBehaviourPunCallbacks
         else{
             this.playerScore += 4;
         }
+        GameManager.Instance.playerTotalScore = this.playerScore;
         string playerScoreString = this.playerScore.ToString();
         PlayerScoreText.text = playerScoreString;
     }
