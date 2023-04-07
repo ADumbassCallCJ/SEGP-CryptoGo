@@ -636,6 +636,7 @@ public class FormingCryptoKits : MonoBehaviourPunCallbacks
     {
        object scoreObject;
        if(targetPlayer.CustomProperties.TryGetValue("TotalScore", out scoreObject)){
+            Debug.Log(scoreObject);
             Debug.Log("Updated total score for " + targetPlayer.NickName);
             int totalScore = (int) scoreObject;
             bool isContainPlayer = GameManager.Instance.playersScore.ContainsKey(targetPlayer);

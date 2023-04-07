@@ -27,6 +27,8 @@ public class Enemy : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient){
             Debug.Log("Button clicked " + currentPlayer.NickName);
             PhotonNetwork.CloseConnection(currentPlayer);
+            // RemovePlayerInTheList();
         }
     }
+
 }

@@ -93,6 +93,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
 
         GetCurrentRoomPlayers();
         ButtonsHide();
+        UnHideKickButton();
       //  AddPlayerObject();
         AddingEnemyPlayerObjectList();
         CreatePlayerObjectOfCurrentRoomPlayers();
@@ -247,6 +248,7 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         AddPlayerObject(newPlayer, PhotonNetwork.PlayerListOthers.Length);
     }
     public override void OnPlayerLeftRoom(Player otherPlayer){
+        Debug.Log(otherPlayer.NickName + " just left the room");
         int index = _listings.FindIndex(x => x.Player == otherPlayer);
         int indexMainPlayer = _mainPlayersListTemp.FindIndex(x => x.Player == otherPlayer);
         if(index != -1){
@@ -257,6 +259,12 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
             Destroy(_mainPlayersListTemp[indexMainPlayer].gameObject);
             _mainPlayersListTemp.RemoveAt(indexMainPlayer);
         }
+        RemovePlayerInTheList(otherPlayer);
+        
+    }
+    private void RemovePlayerInTheList(Player otherPlayer){
+        ExitGames.Client.Photon.Hashtable setPlayerValues = new ExitGames.Client.Photon.Hashtable();
+        PhotonNetwork.CurrentRoom.Players.Remove(otherPlayer.ActorNumber);
     }
     public override void OnMasterClientSwitched(Player newMasterClient)
     {
@@ -282,10 +290,18 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     private void RPC_StartingGame(){
         _readyUpText.gameObject.SetActive(false);
         _readyButton.gameObject.SetActive(false);
+        HideKickButtons();
+        if(PhotonNetwork.IsMasterClient){
+            UpdatePlayerList();
+        }
 
         GameObject Hand = GameObject.Find("Hand");
+        Debug.Log("Game start, the players in the room: ");
       //  MasterManager.NetworkInstantiate(_CardTohandPrefab, Hand.transform.position, Quaternion.identity, Hand);
-        
+        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+            Debug.Log(playerInfo.Key + "  " + playerInfo.Value);
+        }
+        Debug.Log("Players size = " + PhotonNetwork.CurrentRoom.Players.Count);
         GameManager.Instance.DeckSize = CardDatabase.CardList.Count*PhotonNetwork.CurrentRoom.PlayerCount;
         playerDeck.InstantiateCardsDeck();
         Background.GetComponent<PhotonView>().RPC("RPC_playerDeckStart", RpcTarget.All);
@@ -340,6 +356,35 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     
         // playerDeck.StartGame();
     }
+    private void UpdatePlayerList(){
+        int[] playerKeyLists = new int[PhotonNetwork.CurrentRoom.PlayerCount];
+        int i = 0;
+        ExitGames.Client.Photon.Hashtable setPlayerKeysValue = new ExitGames.Client.Photon.Hashtable();
+        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+            playerKeyLists[i++] = playerInfo.Key;
+        }
+        setPlayerKeysValue["PlayerKeys"] = playerKeyLists;
+        Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setPlayerKeysValue));
+    }
+    private void HideKickButtons(){
+        if(PhotonNetwork.IsMasterClient){
+
+            GameObject[] kickButtons = GameObject.FindGameObjectsWithTag("KickButton");
+            foreach(GameObject kickButton in kickButtons){
+                kickButton.SetActive(false);
+            }
+                
+        }
+    }
+    private void UnHideKickButton(){
+        if(PhotonNetwork.IsMasterClient){
+
+            GameObject[] kickButtons = GameObject.FindGameObjectsWithTag("KickButton");
+            foreach(GameObject kickButton in kickButtons){
+                kickButton.SetActive(true);
+            }
+        }
+    }
     public void GiveCards(Player player,int numberOfCardsGivenToPlayer, int cardNumber ){
         List<Card> currentPlayerCards = playerDeck.GiveCardsToPlayer(player, numberOfCardsGivenToPlayer, cardNumber); 
          
@@ -381,6 +426,17 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
         base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
 
         Debug.Log(targetPlayer.NickName + " properties changed");
+
+        object arrayPlayerKeysObject;
+        if(targetPlayer.CustomProperties.TryGetValue("PlayerKeys", out arrayPlayerKeysObject)){
+            int[] playerKeysArray = (int[]) arrayPlayerKeysObject;
+            List<Player> players = new List<Player>();
+            for(int i = 0; i < playerKeysArray.Length;i++){
+                players.Add(PhotonNetwork.CurrentRoom.Players[playerKeysArray[i]]);
+            }
+            GameManager.Instance.playerList = players;
+            Debug.Log("Updated GameManager.Instance.playerList , size = " + GameManager.Instance.playerList.Count);
+        }
         
         object arrayObject;
         if (targetPlayer.CustomProperties.TryGetValue("PlayerCards", out arrayObject)) {

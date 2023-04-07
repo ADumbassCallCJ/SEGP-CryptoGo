@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviourPunCallbacks
     [HideInInspector]
     public int DeckSize;
 
+    [HideInInspector]
+    public List<Player> playerList;
 
 
 
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     { 
         // If there is an instance, and it's not me, delete myself.
         playerCardsPlay = new List<Card>();
+        playerList = new List<Player>();
         playerTotalScore = 0;
         DeckSize = 0;
         playersScore = new Dictionary<Player, int>();

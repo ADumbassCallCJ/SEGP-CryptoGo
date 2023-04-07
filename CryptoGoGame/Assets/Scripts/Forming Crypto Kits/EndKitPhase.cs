@@ -62,6 +62,9 @@ public class EndKitPhase : MonoBehaviourPunCallbacks
     }
 
     private void CounterResetRoom(){
+        // if(PhotonNetwork.CurrentRoom.PlayerCount == 1){
+        //     PlayerDeck.GetComponent<PhotonView>().RPC("ResetDeck", RpcTarget.AllBuffered);
+        // }
         if(PhotonNetwork.IsMasterClient){
             startTime = PhotonNetwork.Time;
             startTimer = true;
@@ -72,6 +75,7 @@ public class EndKitPhase : MonoBehaviourPunCallbacks
         else{
             startTime = double.Parse(PhotonNetwork.CurrentRoom.CustomProperties["StartTime"].ToString());
             startTimer = true;
+            PlayerDeck.GetComponent<PhotonView>().RPC("ResetDeck", RpcTarget.AllBuffered);
         }
     }
     void Update(){

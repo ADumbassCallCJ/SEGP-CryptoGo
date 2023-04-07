@@ -117,15 +117,21 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
         
         setPlayerValues["PlayerCardsPlay"] = null ;
         setPlayerValues["PlayerCards"] = null;
+        setPlayerValues["TotalScore"] = null;
         Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setPlayerValues));
         ExitGames.Client.Photon.Hashtable setRoomValues = new ExitGames.Client.Photon.Hashtable();
         // setRoomValues["turn"] = 0;
         // setRoomValues["StartTime"] = 0;
         setRoomValues["Deck"] = null;
         Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
-         setRoomValues["StartTime"] = 0;
-         setRoomValues["isShuffle"] = false;
+        setRoomValues["StartTime"] = null;
+        setRoomValues["isShuffle"] = false;
         Debug.Log(PhotonNetwork.CurrentRoom.SetCustomProperties(setRoomValues));
+        
+        // Visible the room and allow players to join the room
+        PhotonNetwork.CurrentRoom.IsOpen = true;
+        PhotonNetwork.CurrentRoom.IsVisible = true;
+
         // isShuffle = false;
         // isCardAdd = false;
         // totalCardNumber = 0;
@@ -363,16 +369,17 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
     private void finishRound(){
         Debug.Log("Finish round");
         List<Player> players = new List<Player>();
+        players = GameManager.Instance.playerList;
 
-            for(int i = 0; i < PhotonNetwork.CurrentRoom.Players.Count; i++){
-                players.Add(PhotonNetwork.LocalPlayer);
-            }
-            foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
-                players[playerInfo.Key-1] = playerInfo.Value;
-            }
-            for(int i = 0; i < PhotonNetwork.CurrentRoom.Players.Count; i++){
-                Debug.Log(i + " " + players[i]);
-            }
+            // for(int i = 0; i < PhotonNetwork.CurrentRoom.Players.Count; i++){
+            //     players.Add(PhotonNetwork.LocalPlayer);
+            // }
+            // foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+            //     players[playerInfo.Key-1] = playerInfo.Value;
+            // }
+            // for(int i = 0; i < PhotonNetwork.CurrentRoom.Players.Count; i++){
+            //     Debug.Log(i + " " + players[i]);
+            // }   
             if(players.Count == 2){
                 transferCards(players[0], players[1]);
 
@@ -918,11 +925,25 @@ public class PlayerDeck : MonoBehaviourPunCallbacks
       //  return null;
     }
     private Player playerTurn(int turn){
-        foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
-            if(playerInfo.Key == turn){
-                return playerInfo.Value;
+        Debug.Log("turn = " + turn);
+        Debug.Log("Players list: ");
+        for(int i = 0; i < GameManager.Instance.playerList.Count; i++){
+            Debug.Log(GameManager.Instance.playerList[i]);
+        }
+        for(int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++){
+            if(i+1 == turn){
+                // Debug.Log("Player turn: " + PhotonNetwork.CurrentRoom.Players.ElementAt(i).Value);
+                Debug.Log("Player turn: " + GameManager.Instance.playerList[i]);
+                return GameManager.Instance.playerList[i];
+                // return PhotonNetwork.CurrentRoom.Players.ElementAt(i).Value;
+                
             }
         }
+        // foreach(KeyValuePair<int, Player> playerInfo in PhotonNetwork.CurrentRoom.Players){
+        //     if(playerInfo.Key == turn){
+        //         return playerInfo.Value;
+        //     }
+        // }
         return null;
        
     }
