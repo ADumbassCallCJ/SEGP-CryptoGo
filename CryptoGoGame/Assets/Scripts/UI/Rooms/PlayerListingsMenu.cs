@@ -415,8 +415,12 @@ public class PlayerListingsMenu : MonoBehaviourPunCallbacks
     //   //  setCardsValue.Add("playerCards",myCards);
          setCardsValue["PlayerCards"] = myCards;
          Debug.Log(PhotonNetwork.LocalPlayer.SetCustomProperties(setCardsValue));
-
-        playerDeck.InstantiateCards(6,2 ,PhotonNetwork.LocalPlayer);
+        
+        object auxiliaryNumberObject;
+        PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("AuxiliaryNumber", out auxiliaryNumberObject);
+        int auxiliaryNumber = (int) auxiliaryNumberObject;
+        Debug.Log("Auxiliary Number = " + auxiliaryNumber);
+        playerDeck.InstantiateCards(6,auxiliaryNumber ,PhotonNetwork.LocalPlayer);
     }
     public override void OnPlayerPropertiesUpdate(Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
     {

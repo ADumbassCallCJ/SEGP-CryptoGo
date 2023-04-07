@@ -13,6 +13,7 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
     private List<RoomInfo> _roomInfoLists = new List<RoomInfo>(); 
 
     private int numPlayerMode = 2; // number of player allow in the room, by default is 2. cj added
+    private int auxiliaryCard = 1;
 
     [SerializeField]
     private Dropdown dropDownMenu;
@@ -29,6 +30,10 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
         RoomOptions options = new RoomOptions();
         options.MaxPlayers = System.Convert.ToByte(numPlayerMode);
         Debug.Log("number of player: " + options.MaxPlayers); //testing
+        ExitGames.Client.Photon.Hashtable setCustomRoomProperty = new ExitGames.Client.Photon.Hashtable();
+        Debug.Log(auxiliaryCard);
+        setCustomRoomProperty["AuxiliaryNumber"] = auxiliaryCard; 
+        options.CustomRoomProperties = setCustomRoomProperty;
         // Check if the room existed or not
         if(options.MaxPlayers > 0){
             int index = _roomInfoLists.FindIndex(x => x.Name == _roomName.text);
@@ -83,5 +88,16 @@ public class CreateRoomMenu : MonoBehaviourPunCallbacks
             numPlayerMode = 4;
             Debug.Log("choose 4");
         }
+    }
+        public void ChooseNumberOfAuxiliaryCard(){
+        if(dropDownMenu.value == 0){
+            auxiliaryCard = 1;
+            Debug.Log("choose 1");
+        }
+        if(dropDownMenu.value == 1){
+            numPlayerMode = 2;
+            Debug.Log("choose 2");
+        }
+
     }
 }
