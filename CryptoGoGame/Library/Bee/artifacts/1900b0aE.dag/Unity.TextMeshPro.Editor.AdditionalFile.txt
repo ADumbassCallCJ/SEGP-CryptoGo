@@ -1,1 +1,1 @@
-D:\Documents\VS code\C#\SEGP-CryptoGo\CryptoGoGame
+C:\Uni\SEGP\Spring 2023\Crypto Go\SEGP-CryptoGo\CryptoGoGame
